@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hostmortem: a flight recorder for Linux edge boxes</title>
+<meta name="description" content="Hostmortem records what a Linux edge box was doing before it failed, keeps it through the reboot, and separates what it knows from what it suspects and what it cannot see. Real lab incidents, replayed.">
+<meta name="theme-color" content="#f2eee4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13120f" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Hostmortem">
+<meta property="og:description" content="A flight recorder for Linux edge boxes. Real faults, replayed with their evidence.">
+<meta property="og:image" content="og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/hostmortem-tape.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/hostmortem-text-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script src="data/incidents.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#replay">Skip to the replay</a>
+
+<header class="top">
+  <a class="mark" href="#" aria-label="Hostmortem, top of page">
+    <svg viewBox="0 0 40 24" aria-hidden="true" class="mark-glyph">
+      <path d="M1 16h9l3-11 4 15 3-9h4" />
+      <path d="M28 16h11" class="after" />
+      <path d="M25.5 3v18" class="splice" />
+    </svg>
+    <span>hostmortem</span>
+  </a>
+  <nav aria-label="Sections">
+    <a href="#replay">Replay</a>
+    <a href="#how">How</a>
+    <a href="#measured">Measured</a>
+    <a href="#status">Status</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="replay" aria-labelledby="hero-title">
+    <h1 id="hero-title">It was fine, then it wasn’t, then someone rebooted it.<br><span>Hostmortem keeps the minutes before.</span></h1>
+    <p class="lede">A recorder for Linux gateways and edge boxes. It writes kernel, network and service evidence to disk, survives the reboot, and answers with what it <em>knows</em>, what it <em>suspects</em> and what it <em>could not see</em>.</p>
+
+    <div class="picker" role="tablist" aria-label="Real lab incidents">
+      <span class="picker-ink" aria-hidden="true"></span>
+    </div>
+
+    <figure class="tape-wrap">
+      <div class="tape-head">
+        <p class="tape-what" id="tape-what"></p>
+        <button class="replay-btn" type="button" id="replay-btn" aria-label="Replay the tape">Replay</button>
+      </div>
+      <div class="tape" id="tape" tabindex="0" role="group" aria-roledescription="recorder tape"
+           aria-describedby="tape-help readout">
+        <svg id="tape-svg" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="lane-names" aria-hidden="true"></div>
+        <div class="cursor" aria-hidden="true"></div>
+      </div>
+      <p class="tape-help" id="tape-help">Move along the tape, or focus it and use the arrow keys, to read each recorded event.</p>
+      <output class="readout" id="readout" aria-live="polite"></output>
+    </figure>
+
+    <div class="verdict" id="verdict" aria-live="polite"></div>
+  </section>
+
+  <section class="how" id="how" aria-labelledby="how-title">
+    <h2 id="how-title">How it records</h2>
+    <ol class="steps">
+      <li>
+        <h3>Watches five places</h3>
+        <p>procfs counters, link and route changes over rtnetlink, the kernel log, a few active probes, and the processes you name.</p>
+      </li>
+      <li>
+        <h3>Writes evidence, not dashboards</h3>
+        <p>One writer commits batches to SQLite in WAL mode. If something is dropped under load, the drop itself is written down.</p>
+      </li>
+      <li>
+        <h3>Orders time it can trust</h3>
+        <p>Boot order first, then the kernel’s boot clock. Wall time is only for display, because edge boxes often wake up in 1970.</p>
+      </li>
+      <li>
+        <h3>Argues with itself</h3>
+        <p>Twelve playbooks score evidence for and against. If two explanations tie or nothing qualifies, the answer is “unknown”.</p>
+      </li>
+    </ol>
+    <div class="diagram" role="img" aria-label="Collectors feed a bounded queue, one writer commits to SQLite, a detector opens incidents, and the CLI explains them.">
+      <svg viewBox="0 0 820 170" aria-hidden="true">
+        <g class="d-src">
+          <text x="0" y="22">procfs</text><text x="0" y="52">rtnetlink</text><text x="0" y="82">/dev/kmsg</text><text x="0" y="112">probes</text><text x="0" y="142">processes</text>
+        </g>
+        <path class="d-line" d="M86 18 C150 18 150 80 200 80 M98 48 C150 48 150 80 200 80 M98 78 H200 M78 108 C150 108 150 80 200 80 M106 138 C150 138 150 80 200 80"/>
+        <rect class="d-box" x="200" y="58" width="132" height="44" rx="4"/>
+        <text class="d-label" x="266" y="78" text-anchor="middle">bounded queue</text>
+        <text class="d-sub" x="266" y="93" text-anchor="middle">drops are counted</text>
+        <path class="d-line" d="M332 80 H382"/>
+        <rect class="d-box" x="382" y="58" width="112" height="44" rx="4"/>
+        <text class="d-label" x="438" y="78" text-anchor="middle">writer</text>
+        <text class="d-sub" x="438" y="93" text-anchor="middle">batched commits</text>
+        <path class="d-line" d="M494 80 H540"/>
+        <rect class="d-box accent" x="540" y="58" width="96" height="44" rx="4"/>
+        <text class="d-label" x="588" y="78" text-anchor="middle">events.db</text>
+        <text class="d-sub" x="588" y="93" text-anchor="middle">SQLite WAL</text>
+        <path class="d-line" d="M636 80 H680"/>
+        <text class="d-label" x="684" y="76">hm explain</text>
+        <text class="d-sub" x="684" y="92">text · JSON · HTML</text>
+        <path class="d-line dashed" d="M438 102 V136 H588 V102"/>
+        <text class="d-sub" x="513" y="152" text-anchor="middle">detector opens and closes incidents</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="measured" id="measured" aria-labelledby="measured-title">
+    <h2 id="measured-title">Measured, with the script that measured it</h2>
+    <dl class="ledger" id="ledger"></dl>
+    <p class="fine">Measured in an Ubuntu 24.04 arm64 container on an Apple M1 Pro (Colima VM, 4 vCPU). Not a Raspberry Pi; Pi numbers come later.</p>
+  </section>
+
+  <section class="status" id="status" aria-labelledby="status-title">
+    <h2 id="status-title">Where it stands</h2>
+    <div class="status-cols">
+      <div>
+        <h3>Working</h3>
+        <ul id="status-working"></ul>
+      </div>
+      <div>
+        <h3>Not yet</h3>
+        <ul id="status-not"></ul>
+      </div>
+    </div>
+    <p class="fine">C++20, SQLite, Linux interfaces only. The source is private while v0.1 settles; this page and its repository explain the build. Every incident above comes from the lab’s own output files, unedited apart from shortening.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Built by <a href="https://yousofselim.com">Yousof Selim</a> · <a href="https://github.com/yeegz/hostmortem-showcase">Showcase repository</a> · Fonts: Hostmortem Tape and Hostmortem Text, customised from Martian Mono and Atkinson Hyperlegible (SIL OFL 1.1)</p>
+</footer>
+<noscript><p class="noscript">The replay needs JavaScript. The incident reports are also available as plain HTML in the <a href="reports/">reports folder</a>.</p></noscript>
+</body>
+</html>
