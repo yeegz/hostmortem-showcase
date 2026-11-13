@@ -13,14 +13,12 @@ and what it **could not see**.
 
 **[Replay real incidents →](https://yousofselim.com/hostmortem-showcase/)**
 
-## What is public
+## Source and downloads
 
-| Public | Private |
-|---|---|
-| This repository: the site, its data-generation and verification scripts, docs | The C++ source, tests, lab scripts and CI (`yeegz/hostmortem`) |
-| Unedited lab output: incident data and `hm explain --html` reports | Benchmark raw data and the engineering log (summarised here) |
-
-v0.1.0 is tagged and released **privately** (Debian packages for amd64 and arm64 with checksums, in the private repository). Nothing is downloadable publicly yet. Whether the source or binaries become public is the owner's decision.
+Hostmortem is open source (Apache-2.0): **https://github.com/yeegz/hostmortem**.
+v0.1.0 packages for amd64 and arm64, with checksums, are on its
+[releases page](https://github.com/yeegz/hostmortem/releases/tag/v0.1.0).
+This repository holds the project site and its data and verification scripts.
 
 ## What makes it different
 
@@ -47,7 +45,7 @@ Unedited `hm explain --html` reports: [site/reports](site/reports/).
 |---|---|
 | Hard reset mid-incident (VM) | **≤ 1.4 s** of evidence lost in 2 runs; the incident survived the reboot (after fixing a durability bug this test found) |
 | Throughput | **20,000 events/s, 0 dropped** in 10 runs with every commit fsynced; at 50,000/s this VM drops some (each drop recorded) |
-| Package | v0.1.0 `.deb` for amd64 and arm64 with a dedicated service user, install-tested in CI; `systemd-analyze security` exposure **2.2 (OK)** |
+| Package | v0.1.0 `.deb` for amd64 and arm64 ([download](https://github.com/yeegz/hostmortem/releases/tag/v0.1.0)), install-tested in CI; `systemd-analyze security` exposure **2.2 (OK)** |
 | Agent memory | **6.4 MB** RSS idle, 0.07–0.27 % of one core (3 runs; target < 30 MB) |
 | SIGKILL mid-incident | 1.94 s of evidence lost (bound 5 s), store intact, same incident |
 | Tests | 84, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
@@ -68,10 +66,10 @@ dedicated user with two capabilities. eBPF tracepoints come in v0.2.
 | Working | Not yet |
 |---|---|
 | Engine, CLI, 12 playbooks, reports | Physical power-cut test on real hardware |
-| VM hard-reset test | A public release (v0.1.0 is released privately) |
+| VM hard-reset test | eBPF probes (v0.2) |
 | 11-scenario real-fault lab | eBPF probes (v0.2) |
 | Sanitizer and fuzz targets | Raspberry Pi and x86 hardware numbers |
-| Debian package, hardened systemd unit | Web UI (v1.0) and the optional ESP32 peer |
+| Open source, packages, hardened systemd unit | Web UI (v1.0) and the optional ESP32 peer |
 
 ## This site
 

@@ -230,3 +230,13 @@ h3{font:700 17px/1.3 var(--text)}
 .tape-label{position:absolute;font:500 11px/1 var(--display);color:var(--muted);white-space:nowrap}
 @media (max-width:560px){.tape{--gutter-lane:84px}.lane-names span{left:8px;font-size:10.5px}}
 .tape-what .full{font:500 13px var(--display);white-space:nowrap;margin-left:4px}
+
+/* Download links: one primary, one text link (same press/focus grammar as the rest). */
+.get{display:flex;flex-wrap:wrap;align-items:center;gap:20px;margin:28px 0 0}
+.get a{font:600 15px/1 var(--display);text-decoration:none}
+.get a:not(.get-primary){text-decoration:underline;text-underline-offset:3px}
+.get-primary{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:var(--radius);
+  background:var(--ink);color:var(--paper)!important;transition:transform var(--t-fast) var(--ease),background var(--t-fast) var(--ease)}
+.get-primary:hover{background:var(--orange-ink)}
+.get-primary:active{transform:scale(.97)}
+.get-hero{margin:-12px 0 40px}
