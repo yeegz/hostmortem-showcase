@@ -41,7 +41,7 @@ Unedited `hm explain --html` reports: [site/reports](site/reports/).
 | Agent memory | **6.0 MB** RSS idle (target < 30 MB) |
 | Agent CPU | **0.08 %** of one core idle |
 | SIGKILL mid-incident | 1.97 s of evidence lost (bound 5 s), store intact, same incident |
-| Tests | 79, clean under ASan + UBSan and TSan |
+| Tests | 80, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
 
 Environment and method: [docs/performance.md](docs/performance.md) ·
 [docs/testing.md](docs/testing.md). Measured on an arm64 VM, not yet on a Raspberry Pi.

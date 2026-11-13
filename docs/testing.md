@@ -2,11 +2,11 @@
 
 | Layer | Count / scope | Result |
 |---|---|---|
-| Unit + integration (GoogleTest) | 79 tests incl. 13 synthetic scenario fixtures | pass |
-| ASan + UBSan | the same 79 | clean |
-| TSan | the same 79 (ASLR off via `setarch -R`, needed on 6.x arm64 kernels) | clean |
+| Unit + integration (GoogleTest) | 80 tests incl. 13 synthetic scenario fixtures | pass |
+| ASan + UBSan | the same 80 (CI, amd64 and arm64) | clean |
+| TSan | the same 80 (ASLR off via `setarch -R`, needed on 6.x arm64 kernels) | clean |
 | Real-fault lab | 8 scenarios in network namespaces | see lab.md |
-| Fuzzing | libFuzzer targets for JSON ingest, config, kmsg, procfs, netlink, DNS | targets build in CI; long campaigns not run yet |
+| Fuzzing | libFuzzer targets for JSON ingest, config, kmsg, procfs, netlink, DNS | 1 real crash found and fixed (kmsg parser); 60 s per target in CI; long campaigns not run yet |
 
 Failure behaviour is written down before the test: duplicate batches leave the
 row count unchanged; a process killed mid-transaction leaves committed batches

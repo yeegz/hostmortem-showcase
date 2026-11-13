@@ -105,7 +105,7 @@ MEASURED = [
     {"value": "6.0 MB", "label": "agent memory (RSS) after 60 s idle, research target < 30 MB", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
     {"value": "0.08 %", "label": "of one CPU core over 60 s idle with default sampling", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
     {"value": "2.0 s", "label": "newest evidence lost when the agent was SIGKILLed mid-incident (bound: 5 s)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "79", "label": "unit, integration and scenario tests, clean under ASan + UBSan and TSan", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
+    {"value": "80", "label": "unit, integration and scenario tests, clean under ASan + UBSan and TSan in CI on amd64 and arm64", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
 ]
 STATUS = {
     "working": [
