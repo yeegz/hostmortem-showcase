@@ -65,12 +65,12 @@ dedicated user with two capabilities. eBPF tracepoints come in v0.2.
 
 ## This site
 
-One HTML page, no framework, about 30 KB of code plus 48 KB of custom fonts.
+One HTML page, no framework, about 30 KB of code plus about 100 KB of self-hosted fonts.
 The page data is generated from the lab's own output by
 [`tools/build_data.py`](tools/build_data.py) and checked in headless Chrome
 (screenshots, axe WCAG 2.2 scan, phone overflow, reduced motion) by
-[`tools/verify.mjs`](tools/verify.mjs). The fonts are **Hostmortem Tape** and
-**Hostmortem Text**, customised from Martian Mono and Atkinson Hyperlegible
-(instanced, subset, metrics tuned, renamed) under the SIL Open Font License.
+[`tools/verify.mjs`](tools/verify.mjs). Type: Schibsted Grotesk (everything you read)
+and IBM Plex Mono (raw event data only),
+all from Google Fonts under the SIL Open Font License, subset and self-hosted.
 
 Built by [Yousof Selim](https://yousofselim.com).

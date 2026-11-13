@@ -13,7 +13,7 @@ await p.evaluate(() => {
   scrollTo(0, t.getBoundingClientRect().top + scrollY - 92);
   const tag = document.createElement("div");
   tag.textContent = "hostmortem · a flight recorder for Linux edge boxes";
-  tag.style.cssText = "position:fixed;top:30px;left:40px;font:600 30px 'Hostmortem Tape',monospace;letter-spacing:-.02em;color:#1d1b17;z-index:9";
+  tag.style.cssText = "position:fixed;top:30px;left:40px;font:700 32px 'Schibsted Grotesk',sans-serif;letter-spacing:-.02em;color:#1d1b17;z-index:9";
   document.body.append(tag);
 });
 await p.waitForTimeout(400);
