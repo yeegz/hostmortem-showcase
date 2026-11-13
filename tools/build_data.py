@@ -101,7 +101,7 @@ def build(key, label, injected):
 
 MEASURED = [
     {"value": "8 of 8", "label": "real injected faults diagnosed as expected, including two honest “unknown”s", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "0", "label": "events dropped at 20,000 and 50,000 events/s offered (15 runs)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
+    {"value": "0.6 s", "label": "of evidence lost when a VM running it was hard-reset mid-incident; the incident survived the reboot", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
     {"value": "6.0 MB", "label": "agent memory (RSS) after 60 s idle, research target < 30 MB", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
     {"value": "0.08 %", "label": "of one CPU core over 60 s idle with default sampling", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
     {"value": "2.0 s", "label": "newest evidence lost when the agent was SIGKILLed mid-incident (bound: 5 s)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
@@ -115,7 +115,8 @@ STATUS = {
         "Fuzz targets for every parser; sanitizer CI presets",
     ],
     "not": [
-        "A real reboot or power-cut test (agent kill is tested)",
+        "Throughput re-measured after the durability fix",
+        "A physical power-cut test on real hardware",
         "eBPF tracepoints (v0.2)",
         "Raspberry Pi and x86 measurements",
         "Packages and a tagged release",

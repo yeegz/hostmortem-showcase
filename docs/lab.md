@@ -39,3 +39,21 @@ diagnosis with what the scenario expects.
 
 Not covered yet: a real reboot or power cut (a VM hard reset), CPU and memory
 pressure with stress-ng, and a systemd restart loop.
+
+## Hard reset of a real VM (13 Nov 2026)
+
+`scripts/hard-reset-test.sh` (private repo) boots the agent in a nested QEMU VM
+(Ubuntu 6.8 kernel, ext4 on a virtio disk), lets an incident open, then issues
+QEMU `system_reset`: no shutdown, no sync, the guest's page cache gone.
+
+- **First run: FAIL.** The store came back empty: everything from boot 1 was
+  lost. SQLite's `synchronous=NORMAL` in WAL mode never fsyncs a commit, so the
+  "at most 5 seconds lost" promise was false. The earlier agent-SIGKILL test
+  could not see this, because the kernel keeps its cache when a process dies.
+- **Fix:** `synchronous=FULL`, every commit fsynced.
+- **Second run: PASS.** 2 boots recorded; the newest boot-1 event was captured
+  0.59 s before the reset (+ up to 1 s measurement resolution); the store
+  passed `quick_check`; one incident opened in boot 1 and closed in boot 2.
+
+Limit: a VM reset, not a physical power cut. It shows what the agent and SQLite
+actually flushed, not how a particular disk behaves when power drops.

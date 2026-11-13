@@ -3,6 +3,10 @@
 Environment: Apple M1 Pro → Colima VM (4 vCPU, 8 GiB) → Ubuntu 24.04 container,
 kernel 6.8.0 aarch64, GCC 13.3, RelWithDebInfo. Not a Raspberry Pi, not x86.
 
+> **Throughput figures below are from before the durability fix (13 Nov).**
+> The store now fsyncs every commit; the writer was changed to batch more under
+> load, and the benchmark has not been re-run yet. Don't quote them until it is.
+
 ## Pipeline throughput (`bench/bench_pipeline.cpp`, `bench/run_bench.sh`)
 
 Four producer threads push events at a fixed offered rate through the real

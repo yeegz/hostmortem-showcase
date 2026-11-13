@@ -13,7 +13,14 @@ and what it **could not see**.
 
 **[Replay real incidents →](https://yousofselim.com/hostmortem-showcase/)**
 
-This repository is the public showcase. The source is private while v0.1 settles.
+## What is public
+
+| Public | Private |
+|---|---|
+| This repository: the site, its data-generation and verification scripts, docs | The C++ source, tests, lab scripts and CI (`yeegz/hostmortem`) |
+| Unedited lab output: incident data and `hm explain --html` reports | Benchmark raw data and the engineering log (summarised here) |
+
+There is no released binary or package yet. Whether the source becomes public is the owner's decision.
 
 ## What makes it different
 
@@ -37,7 +44,8 @@ Unedited `hm explain --html` reports: [site/reports](site/reports/).
 
 | | |
 |---|---|
-| Throughput | 20,000 and 50,000 events/s offered, **0 dropped** in 15 runs |
+| Hard reset mid-incident (VM) | **0.6 s** of evidence lost; the incident survived the reboot (after fixing a durability bug this test found) |
+| Throughput | being re-measured after that fix (earlier figures were taken without per-commit fsync) |
 | Agent memory | **6.0 MB** RSS idle (target < 30 MB) |
 | Agent CPU | **0.08 %** of one core idle |
 | SIGKILL mid-incident | 1.97 s of evidence lost (bound 5 s), store intact, same incident |
@@ -58,7 +66,8 @@ dedicated user with two capabilities. eBPF tracepoints come in v0.2.
 
 | Working | Not yet |
 |---|---|
-| Engine, CLI, 12 playbooks, reports | Real reboot / power-cut test |
+| Engine, CLI, 12 playbooks, reports | Physical power-cut test on real hardware |
+| VM hard-reset test | Throughput re-measured after the durability fix |
 | 8-scenario real-fault lab | eBPF probes (v0.2) |
 | Sanitizer and fuzz targets | Raspberry Pi and x86 numbers |
 | Hardened systemd unit | Packages and a tagged release; web UI (v1.0) |
