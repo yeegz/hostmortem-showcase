@@ -41,9 +41,7 @@ h1,h2,h3{line-height:1.15;margin:0}
   padding:12px var(--gutter);background:color-mix(in srgb,var(--paper) 88%,transparent);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .mark{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 19px/1 var(--display);letter-spacing:-.02em}
-.mark-glyph{width:34px;height:20px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.mark-glyph .after{stroke:var(--orange)}
-.mark-glyph .splice{stroke:var(--orange);stroke-width:1.5;stroke-dasharray:2 2.5}
+.mark-glyph{width:26px;height:26px;flex:0 0 auto;fill:none}
 .top nav{display:flex;gap:4px}
 .top nav a{font:500 14px/1 var(--display);text-decoration:none;padding:9px 10px;border-radius:var(--radius);
   transition:background var(--t-fast) var(--ease),transform var(--t-fast) var(--ease)}
@@ -214,15 +212,16 @@ h3{font:700 17px/1.3 var(--text)}
 @keyframes settle{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 
 /* Header mark traces itself once. */
-.mark-glyph path{stroke-dasharray:60;stroke-dashoffset:60;animation:trace 900ms var(--ease) 120ms forwards}
-.mark-glyph .after{animation-delay:700ms}
-.mark-glyph .splice{stroke-dasharray:2 2.5;stroke-dashoffset:0;opacity:0;animation:appear 200ms linear 820ms forwards}
+/* Header mark: the lanes record left to right once, then the splice lands. */
+.mark-glyph .lanes{clip-path:inset(0 100% 0 0);animation:record 700ms var(--ease) 120ms forwards}
+.mark-glyph .splice{opacity:0;animation:appear 160ms linear 760ms forwards}
+@keyframes record{to{clip-path:inset(0 0 0 0)}}
 @keyframes trace{to{stroke-dashoffset:0}}
 @keyframes appear{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){
   .ink,.m-bad.ink{transform:none}
   .v-tag.ruled_out{background-size:100% 1px}
-  .mark-glyph path{stroke-dashoffset:0}
+  .mark-glyph .lanes{clip-path:none}
   .mark-glyph .splice{opacity:1}
 }
 .v-tag{justify-self:start;align-self:start}

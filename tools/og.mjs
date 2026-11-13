@@ -10,10 +10,15 @@ await p.goto(url, { waitUntil: "networkidle" });
 await p.evaluate(() => {
   document.querySelector(".top").style.display = "none";
   const t = document.querySelector(".picker");
-  scrollTo(0, t.getBoundingClientRect().top + scrollY - 92);
+  scrollTo(0, t.getBoundingClientRect().top + scrollY - 104);
   const tag = document.createElement("div");
-  tag.textContent = "hostmortem · a flight recorder for Linux edge boxes";
-  tag.style.cssText = "position:fixed;top:30px;left:40px;font:700 32px 'Schibsted Grotesk',sans-serif;letter-spacing:-.02em;color:#1d1b17;z-index:9";
+  tag.innerText = "hostmortem · a flight recorder for Linux edge boxes";
+  const icon = document.createElement("img");
+  icon.src = "brand/icon.svg";
+  icon.width = icon.height = 40;
+  icon.style.cssText = "vertical-align:-9px;margin-right:14px";
+  tag.prepend(icon);
+  tag.style.cssText = "position:fixed;top:0;left:0;right:0;padding:24px 40px 22px;background:#f2eee4;font:700 32px 'Schibsted Grotesk',sans-serif;letter-spacing:-.02em;color:#1d1b17;z-index:9";
   document.body.append(tag);
 });
 await p.waitForTimeout(400);
