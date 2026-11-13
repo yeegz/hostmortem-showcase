@@ -47,7 +47,7 @@ Unedited `hm explain --html` reports: [site/reports](site/reports/).
 | Hard reset mid-incident (VM) | **≤ 1.4 s** of evidence lost in 2 runs; the incident survived the reboot (after fixing a durability bug this test found) |
 | Throughput | **20,000 events/s, 0 dropped** in 10 runs with every commit fsynced; at 50,000/s this VM drops some (each drop recorded) |
 | Package | Debian package with a dedicated service user; `systemd-analyze security` exposure **2.2 (OK)** |
-| Agent memory | **6.0 MB** RSS idle (target < 30 MB) |
+| Agent memory | **6.0 MB** RSS idle, measured before the durability fix (target < 30 MB) |
 | SIGKILL mid-incident | 1.89 s of evidence lost (bound 5 s), store intact, same incident |
 | Tests | 82, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
 
