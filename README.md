@@ -20,7 +20,7 @@ and what it **could not see**.
 | This repository: the site, its data-generation and verification scripts, docs | The C++ source, tests, lab scripts and CI (`yeegz/hostmortem`) |
 | Unedited lab output: incident data and `hm explain --html` reports | Benchmark raw data and the engineering log (summarised here) |
 
-There is no released binary or package yet. Whether the source becomes public is the owner's decision.
+A Debian package builds and installs, but no release has been published yet. Whether the source becomes public is the owner's decision.
 
 ## What makes it different
 
@@ -44,12 +44,12 @@ Unedited `hm explain --html` reports: [site/reports](site/reports/).
 
 | | |
 |---|---|
-| Hard reset mid-incident (VM) | **0.6 s** of evidence lost; the incident survived the reboot (after fixing a durability bug this test found) |
-| Throughput | being re-measured after that fix (earlier figures were taken without per-commit fsync) |
+| Hard reset mid-incident (VM) | **≤ 1.4 s** of evidence lost in 2 runs; the incident survived the reboot (after fixing a durability bug this test found) |
+| Throughput | **20,000 events/s, 0 dropped** in 10 runs with every commit fsynced; at 50,000/s this VM drops some (each drop recorded) |
+| Package | Debian package with a dedicated service user; `systemd-analyze security` exposure **2.2 (OK)** |
 | Agent memory | **6.0 MB** RSS idle (target < 30 MB) |
-| Agent CPU | **0.08 %** of one core idle |
-| SIGKILL mid-incident | 1.97 s of evidence lost (bound 5 s), store intact, same incident |
-| Tests | 80, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
+| SIGKILL mid-incident | 1.89 s of evidence lost (bound 5 s), store intact, same incident |
+| Tests | 82, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
 
 Environment and method: [docs/performance.md](docs/performance.md) ·
 [docs/testing.md](docs/testing.md). Measured on an arm64 VM, not yet on a Raspberry Pi.
@@ -67,10 +67,10 @@ dedicated user with two capabilities. eBPF tracepoints come in v0.2.
 | Working | Not yet |
 |---|---|
 | Engine, CLI, 12 playbooks, reports | Physical power-cut test on real hardware |
-| VM hard-reset test | Throughput re-measured after the durability fix |
+| VM hard-reset test | A tagged, published release (v0.1.0 is prepared) |
 | 8-scenario real-fault lab | eBPF probes (v0.2) |
-| Sanitizer and fuzz targets | Raspberry Pi and x86 numbers |
-| Hardened systemd unit | Packages and a tagged release; web UI (v1.0) |
+| Sanitizer and fuzz targets | Raspberry Pi and x86 hardware numbers |
+| Debian package, hardened systemd unit | Web UI (v1.0) and the optional ESP32 peer |
 
 ## This site
 

@@ -101,25 +101,26 @@ def build(key, label, injected):
 
 MEASURED = [
     {"value": "8 of 8", "label": "real injected faults diagnosed as expected, including two honest “unknown”s", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "0.6 s", "label": "of evidence lost when a VM running it was hard-reset mid-incident; the incident survived the reboot", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
+    {"value": "0 dropped", "label": "at 20,000 events/s, with every commit fsynced to disk (10 runs)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
+    {"value": "≤ 1.4 s", "label": "of evidence lost when a VM running it was hard-reset mid-incident (2 runs); the incident survived the reboot", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
     {"value": "6.0 MB", "label": "agent memory (RSS) after 60 s idle, research target < 30 MB", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
-    {"value": "0.08 %", "label": "of one CPU core over 60 s idle with default sampling", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
-    {"value": "2.0 s", "label": "newest evidence lost when the agent was SIGKILLed mid-incident (bound: 5 s)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "80", "label": "unit, integration and scenario tests, clean under ASan + UBSan and TSan in CI on amd64 and arm64", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
+    {"value": "1.9 s", "label": "newest evidence lost when the agent was SIGKILLed mid-incident (bound: 5 s)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
+    {"value": "82", "label": "unit, integration and scenario tests, clean under ASan + UBSan and TSan in CI on amd64 and arm64", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
 ]
 STATUS = {
     "working": [
         "C++20 agent and CLI: queue, SQLite WAL store, five collectors, detector, 12 playbooks",
         "Real-fault lab: 8 scenarios in network namespaces",
+        "Hard reset of a VM mid-incident: evidence and the incident survive",
+        "Debian package with a locked-down service user (install-tested)",
         "Text, JSON and self-contained HTML incident reports",
-        "Fuzz targets for every parser; sanitizer CI presets",
+        "Fuzz targets for every parser; sanitizer CI on amd64 and arm64",
     ],
     "not": [
-        "Throughput re-measured after the durability fix",
         "A physical power-cut test on real hardware",
+        "A published release (v0.1.0 is prepared, not tagged)",
         "eBPF tracepoints (v0.2)",
-        "Raspberry Pi and x86 measurements",
-        "Packages and a tagged release",
+        "Raspberry Pi and x86 hardware measurements",
         "Web UI (v1.0) and the optional ESP32 peer",
     ],
 }
