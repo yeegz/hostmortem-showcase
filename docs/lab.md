@@ -13,7 +13,7 @@ Each scenario: fresh store → pre-flight (DNS, ping and TCP must work) → heal
 baseline → inject → recover → wait for the incident to close → compare the
 diagnosis with what the scenario expects.
 
-| Scenario | Injection | Expected diagnosis | Result (13 Nov 2026) |
+| Scenario | Injection | Expected diagnosis | Result (14 Nov 2026) |
 |---|---|---|---|
 | Upstream DNS down | `iptables -j DROP` UDP 53 at the server | upstream DNS supported; local resolver and link ruled out | pass |
 | Local resolver broken | resolv.conf points at a dead stub; server fine | local resolver supported; link ruled out | pass |
@@ -22,7 +22,10 @@ diagnosis with what the scenario expects.
 | kill -9, kernel log hidden | same, agent without CAP_SYSLOG and CAP_SYS_ADMIN | **unknown**; OOM stays *possible*, gap listed | pass |
 | 50% packet loss | `tc netem loss 50%` | path degradation supported | pass |
 | Latency spike | `tc netem delay 300ms 50ms` | path degradation supported | pass |
-| Agent killed mid-incident | SIGKILL `hmd` during a DNS outage, restart 3 s later | same incident continues; store passes quick_check; ≤ 5 s lost | pass (1.97 s lost, quick_check ok, 1 incident) |
+| Agent killed mid-incident | SIGKILL `hmd` during a DNS outage, restart 3 s later | same incident continues; store passes quick_check; ≤ 5 s lost | pass (1.94 s lost, quick_check ok, 1 incident) |
+| Out of memory | a process in a 64 MiB cgroup allocates until the kernel kills it | OOM kill supported, with fresh cgroup evidence | pass |
+| CPU starved | 12 busy loops on 4 vCPUs | CPU/memory/I-O starvation supported (PSI) | pass |
+| Crash-restart loop | SIGKILL + restart of a service 4 times | restart loop supported | pass |
 
 ## Bugs the lab found (and the fixes)
 
@@ -57,3 +60,12 @@ QEMU `system_reset`: no shutdown, no sync, the guest's page cache gone.
 
 Limit: a VM reset, not a physical power cut. It shows what the agent and SQLite
 actually flushed, not how a particular disk behaves when power drops.
+
+## A safety failure in the lab (14 Nov 2026)
+
+The first out-of-memory scenario's 64 MiB cgroup limit silently failed to
+apply, so the test process grew until the *system-wide* OOM killer stopped it.
+Only that process was killed, but in a shared VM it could have been anything.
+The scenario now verifies the limit before starting, the allocator caps itself
+at 512 MiB, and grading only counts evidence created after the injection (an
+old OOM line had produced a false pass).

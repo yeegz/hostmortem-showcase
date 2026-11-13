@@ -24,6 +24,9 @@ SCENARIOS = [
     ("packet_loss", "50% packet loss", "tc netem drops half the packets from the gateway for 30\u00a0s."),
     ("latency", "Latency spike", "tc netem adds 300\u00a0ms ±\u00a050\u00a0ms of delay at the gateway for 20\u00a0s."),
     ("agent_crash", "Agent killed mid-incident", "During a DNS outage the agent itself is SIGKILLed, restarted 3\u00a0s later, and keeps the same incident."),
+    ("oom_kill", "Out of memory", "A process in a cgroup capped at 64\u00a0MiB allocates until the kernel's OOM killer ends it."),
+    ("cpu_saturation", "CPU starved", "Twelve busy loops on four vCPUs for 30\u00a0s."),
+    ("restart_loop", "Crash-restart loop", "A watched service is killed with SIGKILL and restarted four times in about 20\u00a0s."),
 ]
 
 HIDE = ("sys.", "net.tcp", "net.udp", "net.conntrack", "clock.state")
@@ -100,25 +103,25 @@ def build(key, label, injected):
 
 
 MEASURED = [
-    {"value": "8 of 8", "label": "real injected faults diagnosed as expected, including two honest “unknown”s", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
+    {"value": "11 of 11", "label": "real injected faults diagnosed as expected, including two honest “unknown”s", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
     {"value": "0 dropped", "label": "at 20,000 events/s, with every commit fsynced to disk (10 runs)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
     {"value": "≤ 1.4 s", "label": "of evidence lost when a VM running it was hard-reset mid-incident (2 runs); the incident survived the reboot", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "6.0 MB", "label": "agent memory (RSS) after 60 s idle, measured before the durability fix; research target < 30 MB", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
-    {"value": "1.9 s", "label": "newest evidence lost when the agent was SIGKILLed mid-incident (bound: 5 s)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "82", "label": "unit, integration and scenario tests, clean under ASan + UBSan and TSan in CI on amd64 and arm64", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
+    {"value": "6.4 MB", "label": "agent memory (RSS) after 60 s idle (3 runs); research target < 30 MB", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
+    {"value": "1.9 s", "label": "of evidence lost when the agent itself was SIGKILLed mid-incident (bound: 5 s)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
+    {"value": "84", "label": "unit, integration and scenario tests, clean under ASan + UBSan and TSan in CI on amd64 and arm64", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
 ]
 STATUS = {
     "working": [
         "C++20 agent and CLI: queue, SQLite WAL store, five collectors, detector, 12 playbooks",
-        "Real-fault lab: 8 scenarios in network namespaces",
+        "Real-fault lab: 11 scenarios, including a real OOM kill",
         "Hard reset of a VM mid-incident: evidence and the incident survive",
-        "Debian package with a locked-down service user (install-tested)",
+        "v0.1.0 packages for amd64 and arm64, install-tested in CI (private release)",
         "Text, JSON and self-contained HTML incident reports",
         "Fuzz targets for every parser; sanitizer CI on amd64 and arm64",
     ],
     "not": [
         "A physical power-cut test on real hardware",
-        "A published release (v0.1.0 is prepared, not tagged)",
+        "A public release: v0.1.0 exists, but privately",
         "eBPF tracepoints (v0.2)",
         "Raspberry Pi and x86 hardware measurements",
         "Web UI (v1.0) and the optional ESP32 peer",

@@ -20,7 +20,7 @@ and what it **could not see**.
 | This repository: the site, its data-generation and verification scripts, docs | The C++ source, tests, lab scripts and CI (`yeegz/hostmortem`) |
 | Unedited lab output: incident data and `hm explain --html` reports | Benchmark raw data and the engineering log (summarised here) |
 
-A Debian package builds and installs, but no release has been published yet. Whether the source becomes public is the owner's decision.
+v0.1.0 is tagged and released **privately** (Debian packages for amd64 and arm64 with checksums, in the private repository). Nothing is downloadable publicly yet. Whether the source or binaries become public is the owner's decision.
 
 ## What makes it different
 
@@ -36,9 +36,10 @@ A Debian package builds and installs, but no release has been published yet. Whe
 
 ## Real faults, real output
 
-Eight faults injected into Linux network namespaces (iptables, `ip link`, tc
-netem, `kill -9`, dropped capabilities, SIGKILL of the agent itself): **8 of 8
-diagnosed as expected**, including two honest “unknown”s.
+Eleven faults injected into Linux network namespaces (iptables, `ip link`, tc
+netem, `kill -9`, dropped capabilities, SIGKILL of the agent itself, a real
+cgroup OOM kill, CPU saturation, a crash-restart loop): **11 of 11 diagnosed
+as expected**, including two honest “unknown”s.
 Details and the bugs the lab caught: [docs/lab.md](docs/lab.md).
 Unedited `hm explain --html` reports: [site/reports](site/reports/).
 
@@ -46,10 +47,10 @@ Unedited `hm explain --html` reports: [site/reports](site/reports/).
 |---|---|
 | Hard reset mid-incident (VM) | **≤ 1.4 s** of evidence lost in 2 runs; the incident survived the reboot (after fixing a durability bug this test found) |
 | Throughput | **20,000 events/s, 0 dropped** in 10 runs with every commit fsynced; at 50,000/s this VM drops some (each drop recorded) |
-| Package | Debian package with a dedicated service user; `systemd-analyze security` exposure **2.2 (OK)** |
-| Agent memory | **6.0 MB** RSS idle, measured before the durability fix (target < 30 MB) |
-| SIGKILL mid-incident | 1.89 s of evidence lost (bound 5 s), store intact, same incident |
-| Tests | 82, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
+| Package | v0.1.0 `.deb` for amd64 and arm64 with a dedicated service user, install-tested in CI; `systemd-analyze security` exposure **2.2 (OK)** |
+| Agent memory | **6.4 MB** RSS idle, 0.07–0.27 % of one core (3 runs; target < 30 MB) |
+| SIGKILL mid-incident | 1.94 s of evidence lost (bound 5 s), store intact, same incident |
+| Tests | 84, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
 
 Environment and method: [docs/performance.md](docs/performance.md) ·
 [docs/testing.md](docs/testing.md). Measured on an arm64 VM, not yet on a Raspberry Pi.
@@ -67,8 +68,8 @@ dedicated user with two capabilities. eBPF tracepoints come in v0.2.
 | Working | Not yet |
 |---|---|
 | Engine, CLI, 12 playbooks, reports | Physical power-cut test on real hardware |
-| VM hard-reset test | A tagged, published release (v0.1.0 is prepared) |
-| 8-scenario real-fault lab | eBPF probes (v0.2) |
+| VM hard-reset test | A public release (v0.1.0 is released privately) |
+| 11-scenario real-fault lab | eBPF probes (v0.2) |
 | Sanitizer and fuzz targets | Raspberry Pi and x86 hardware numbers |
 | Debian package, hardened systemd unit | Web UI (v1.0) and the optional ESP32 peer |
 
