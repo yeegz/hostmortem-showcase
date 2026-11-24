@@ -1,6 +1,20 @@
 /* Hostmortem showcase: replays real lab incidents on a recorder tape.
    No framework, no HTML strings: every node is built with DOM methods.
    Motion plays once and settles. */
+// Copy button for the install line (hidden without JS or a clipboard).
+(() => {
+  for (const b of document.querySelectorAll(".copy-btn")) {
+    const src = document.getElementById(b.dataset.copy);
+    if (!src || !navigator.clipboard) continue;
+    b.hidden = false;
+    b.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(src.textContent); b.textContent = "Copied"; }
+      catch { b.textContent = "Select and copy"; }
+      setTimeout(() => { b.textContent = "Copy"; }, 2000);
+    });
+  }
+})();
+
 (() => {
   "use strict";
   const data = window.HM_DATA;

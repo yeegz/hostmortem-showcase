@@ -11,13 +11,22 @@ Hostmortem writes kernel, network and service evidence to disk, keeps it
 through the reboot, and answers with what it **knows**, what it **suspects**
 and what it **could not see**.
 
-**[Replay real incidents →](https://yousofselim.com/hostmortem-showcase/)**
+## Install
 
-## Source and downloads
+On Ubuntu 22.04/24.04, Debian 12/13 or Raspberry Pi OS (64-bit), amd64 or arm64:
 
-Hostmortem is open source (Apache-2.0): **https://github.com/yeegz/hostmortem**.
-v0.1.0 packages for amd64 and arm64, with checksums, are on its
-[releases page](https://github.com/yeegz/hostmortem/releases/tag/v0.1.0).
+```bash
+curl -fsSL https://github.com/yeegz/hostmortem/releases/latest/download/install.sh | sudo sh
+sudo hm drill        # a harmless test incident, recorded by the live agent
+sudo hm explain 1    # what it knows, suspects and could not see
+sudo hm report       # every incident as one self-contained HTML file
+```
+
+Step by step: [QUICKSTART](https://github.com/yeegz/hostmortem/blob/main/docs/QUICKSTART.md).
+Source (Apache-2.0) and releases: **https://github.com/yeegz/hostmortem**.
+
+**[Project site: install, then real lab incidents as examples →](https://yousofselim.com/hostmortem-showcase/)**
+
 This repository holds the project site and its data and verification scripts.
 
 ## What makes it different
@@ -45,10 +54,10 @@ Unedited `hm explain --html` reports: [site/reports](site/reports/).
 |---|---|
 | Hard reset mid-incident (VM) | **≤ 1.4 s** of evidence lost in 2 runs; the incident survived the reboot (after fixing a durability bug this test found) |
 | Throughput | **20,000 events/s, 0 dropped** in 10 runs with every commit fsynced; at 50,000/s this VM drops some (each drop recorded) |
-| Package | v0.1.0 `.deb` for amd64 and arm64 ([download](https://github.com/yeegz/hostmortem/releases/tag/v0.1.0)), install-tested in CI; `systemd-analyze security` exposure **2.2 (OK)** |
-| Agent memory | **6.4 MB** RSS idle, 0.07–0.27 % of one core (3 runs; target < 30 MB) |
+| Install | v0.2.0 `.deb` for amd64 and arm64 plus `install.sh` ([release](https://github.com/yeegz/hostmortem/releases/tag/v0.2.0)); install → service → `hm drill` → `hm report` → purge passes on fresh Ubuntu 22.04/24.04 VMs (amd64, arm64) in CI and fresh Debian 12 / Ubuntu 24.04 VMs; `systemd-analyze security` exposure **2.6–2.8 (OK)** |
+| Agent memory | **5.9–7.1 MB** RSS, 0.13–0.25 % of one core: the installed service on 4 fresh VMs, 60 s (target < 30 MB) |
 | SIGKILL mid-incident | 1.94 s of evidence lost (bound 5 s), store intact, same incident |
-| Tests | 84, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
+| Tests | 92, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
 
 Environment and method: [docs/performance.md](docs/performance.md) ·
 [docs/testing.md](docs/testing.md). Measured on an arm64 VM, not yet on a Raspberry Pi.

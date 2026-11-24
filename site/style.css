@@ -2,27 +2,26 @@
 @font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-400.woff2) format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-500.woff2) format("woff2");font-weight:500;font-display:swap}
 
-/* Strip-chart paper, ink, and the international orange of flight recorders. */
+/* Night instrument panel: navy metal, a recessed screen, cool signal light.
+   One theme (dark), layered surfaces: recessed < base < raised < floating. */
 :root{
-  --paper:#f2eee4; --paper-2:#ebe5d8; --grid:#ddd5c4; --grid-strong:#cbc1ad;
-  --ink:#1d1b17; --ink-2:#4f493f; --muted:#6a6355;
-  --orange:#e2470e; --orange-ink:#b3370a; --orange-wash:rgba(226,71,14,.10);
-  --ok:#2f5d3a; --line:#d4cbb8;
+  --paper:#0b1322; --paper-2:#121d33; --grid:#1a2742; --grid-strong:#2a3b5e;
+  --ink:#dce5f4; --ink-2:#a9b8d2; --muted:#7f90b0;
+  --orange:#4fd0ff; --orange-ink:#7fdcff; --orange-wash:rgba(79,208,255,.10);
+  --violet:#a58bff; --violet-wash:rgba(165,139,255,.14); --rose:#ff5d8f; --rose-wash:rgba(255,93,143,.14);
+  --ok:#5fe3b0; --line:#1e2c4a;
+  --raised:linear-gradient(180deg,#18264233,#0f182b00),#131f37;
+  --bezel:linear-gradient(180deg,#23345a,#141f38 38%,#0f1830);
+  --hi:inset 0 1px 0 rgba(190,215,255,.10);
+  --sh-1:0 1px 0 rgba(0,0,0,.35),0 6px 14px -6px rgba(0,0,0,.55);
+  --sh-2:0 2px 0 rgba(0,0,0,.35),0 18px 40px -18px rgba(0,0,0,.8),0 40px 80px -40px rgba(20,60,140,.45);
+  --well:inset 0 2px 6px rgba(0,0,0,.55),inset 0 0 0 1px rgba(0,0,0,.4),0 1px 0 rgba(190,215,255,.06);
   --display:"Schibsted Grotesk",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --text:"Schibsted Grotesk",system-ui,sans-serif;
   --t-fast:140ms; --t:220ms; --ease:cubic-bezier(.2,.7,.2,1);
-  --radius:6px; --gutter:clamp(16px,4vw,40px);
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){
-  :root{
-    --paper:#13120f; --paper-2:#1b1915; --grid:#26231d; --grid-strong:#36322a;
-    --ink:#ece6d8; --ink-2:#c3bba9; --muted:#9a927f;
-    --orange:#ff6a2b; --orange-ink:#ff8a57; --orange-wash:rgba(255,106,43,.13);
-    --ok:#8fc79c; --line:#2f2b24;
-    color-scheme:dark;
-  }
+  --radius:10px; --r-lg:20px; --r-sm:6px; --gutter:clamp(16px,4vw,40px);
+  color-scheme:dark;
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -239,4 +238,154 @@ h3{font:700 17px/1.3 var(--text)}
   background:var(--ink);color:var(--paper)!important;transition:transform var(--t-fast) var(--ease),background var(--t-fast) var(--ease)}
 .get-primary:hover{background:var(--orange-ink)}
 .get-primary:active{transform:scale(.97)}
-.get-hero{margin:-12px 0 40px}
+
+/* Install: the primary call to action. */
+.install{margin:0 0 64px;padding:28px 0 0;border-top:2px solid var(--ink);max-width:860px}
+.install-title{font:700 22px/1.2 var(--display);letter-spacing:-.01em}
+.install-for{color:var(--ink-2);margin:6px 0 16px}
+.install-cmd{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.install-cmd pre{flex:1 1 420px;min-width:0;margin:0;padding:14px 16px;background:var(--paper-2);border:1px solid var(--line);
+  border-radius:var(--radius);overflow-x:auto}
+.install-cmd code,.install code{font:500 14px/1.5 var(--mono)}
+.copy-btn{min-height:44px;padding:0 18px;border:1px solid var(--ink);border-radius:var(--radius);background:transparent;color:var(--ink);
+  font:600 15px/1 var(--display);cursor:pointer;transition:transform var(--t-fast) var(--ease)}
+.copy-btn:hover{color:var(--orange-ink);border-color:var(--orange-ink)}
+.copy-btn:active{transform:scale(.97)}
+.install-note{color:var(--ink-2);font-size:15px;margin:12px 0 18px;max-width:70ch}
+.install-steps{margin:0;padding:0;list-style:none;display:grid;gap:10px;counter-reset:s}
+.install-steps li{display:grid;grid-template-columns:minmax(150px,auto) 1fr;gap:4px 16px;align-items:baseline;counter-increment:s}
+.install-steps li span{color:var(--ink-2);font-size:15px}
+@media (max-width:600px){.install-steps li{grid-template-columns:1fr}}
+.examples-title{font:700 22px/1.2 var(--display);letter-spacing:-.01em;padding-top:28px;border-top:2px solid var(--ink)}
+.examples-note{color:var(--ink-2);margin:6px 0 20px;max-width:70ch}
+
+
+/* =================== Depth layer =================== */
+body{background:
+  radial-gradient(900px 520px at 8% -8%,rgba(79,208,255,.13),transparent 60%),
+  radial-gradient(800px 600px at 100% 30%,rgba(165,139,255,.08),transparent 60%),
+  var(--paper);background-attachment:fixed}
+.top{background:rgba(11,19,34,.72);border-bottom:1px solid rgba(120,150,210,.12);box-shadow:0 10px 30px -20px rgba(0,0,0,.9)}
+.top nav a{color:var(--ink-2)}
+.top nav a:hover{background:rgba(120,150,210,.10)}
+section{border-bottom:0}
+.hero h1{background:linear-gradient(180deg,#f4f8ff 30%,#9fb4d8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 span{background:linear-gradient(90deg,#7fdcff,#a58bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{color:#eef3fc}
+
+/* Chunky pressable buttons (raised, with a lip). */
+.get-primary,.copy-btn{position:relative;border:0;border-radius:12px;color:#06202f!important;
+  background:linear-gradient(180deg,#8be1ff,#3fbdf0);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 4px 0 #1b7fae,0 10px 22px -8px rgba(79,208,255,.55);
+  transition:transform 90ms var(--ease),box-shadow 90ms var(--ease),filter var(--t-fast) var(--ease)}
+.get-primary:hover,.copy-btn:hover{filter:brightness(1.07);background:linear-gradient(180deg,#8be1ff,#3fbdf0);color:#06202f}
+.get-primary:active,.copy-btn:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 #1b7fae,0 4px 10px -6px rgba(79,208,255,.5)}
+.get a:not(.get-primary){color:var(--ink-2);text-decoration-color:rgba(127,220,255,.4)}
+.get a:not(.get-primary):hover{color:var(--orange-ink)}
+
+/* Install console: raised slab, recessed command well. */
+.install{border-top:0;padding:28px clamp(18px,3vw,32px) 30px;border-radius:var(--r-lg);
+  background:var(--raised);box-shadow:var(--hi),var(--sh-2);border:1px solid rgba(120,150,210,.14);position:relative;overflow:hidden}
+.install::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,#4fd0ff,#a58bff 60%,transparent)}
+.install-title{display:flex;align-items:center;gap:10px}
+.install-title::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--ok);
+  box-shadow:0 0 0 3px rgba(95,227,176,.15),0 0 12px rgba(95,227,176,.8)}
+.install-cmd pre{background:#070d19;border:0;border-radius:12px;box-shadow:var(--well);padding:15px 18px}
+.install-cmd pre code{color:#cfe9ff}
+.install-cmd pre code::before{content:"$ ";color:var(--ok)}
+.install-steps{gap:8px}
+.install-steps li{padding:10px 14px;border-radius:12px;background:rgba(7,13,25,.45);box-shadow:inset 0 0 0 1px rgba(120,150,210,.10)}
+.install-steps li code{color:var(--orange-ink)}
+.install code{color:var(--orange-ink)}
+
+.examples-title{border-top:0;padding-top:8px}
+
+/* Picker: pills on a sunken track; the ink becomes a raised pill. */
+.picker{gap:4px;padding:5px 40px 5px 5px;border:0;border-radius:14px;background:#070d19;box-shadow:var(--well);margin-bottom:14px}
+.picker button{border-radius:10px;padding:11px 14px;min-height:40px;position:relative;z-index:1}
+.picker button:hover{background:rgba(120,150,210,.08)}
+.picker button[aria-selected=true]{color:#06202f;font-weight:600}
+.picker-ink{top:5px;bottom:5px;height:auto;border-radius:10px;z-index:0;
+  background:linear-gradient(180deg,#8be1ff,#47c3f3);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 16px -6px rgba(79,208,255,.7)}
+
+/* The device: a machined bezel around a recessed screen. */
+.tape-wrap{position:relative;border:1px solid rgba(140,170,230,.16);border-radius:var(--r-lg);padding:16px 16px 18px;
+  background:var(--bezel);box-shadow:var(--hi),inset 0 -2px 0 rgba(0,0,0,.35),var(--sh-2)}
+.tape-wrap::after{content:"";position:absolute;inset:6px;border-radius:15px;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)}
+.tape-head{align-items:center}
+.rec{display:inline-flex;align-items:center;gap:8px;font:500 12px/1 var(--display);color:var(--ink-2);
+  padding:7px 10px;border-radius:999px;background:#070d19;box-shadow:var(--well);white-space:nowrap}
+.rec i{width:8px;height:8px;border-radius:50%;background:var(--rose);box-shadow:0 0 10px var(--rose);animation:led 2.4s ease-in-out infinite}
+@keyframes led{50%{opacity:.35;box-shadow:0 0 2px var(--rose)}}
+.tape-tools{display:flex;align-items:center;gap:8px}
+.replay-btn{border:0;border-radius:999px;color:var(--ink);background:linear-gradient(180deg,#2a3d63,#1b2944);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #0a1222,0 8px 16px -8px rgba(0,0,0,.8)}
+.replay-btn:hover{background:linear-gradient(180deg,#33497a,#1f2f4f)}
+.replay-btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 #0a1222}
+.tape{border-radius:12px;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0%,rgba(79,208,255,.07),transparent 60%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),
+    repeating-linear-gradient(90deg,transparent 0 47px,rgba(79,208,255,.07) 47px 48px),
+    #050a14;
+  box-shadow:inset 0 3px 14px rgba(0,0,0,.8),inset 0 0 0 1px rgba(0,0,0,.6),0 1px 0 rgba(190,215,255,.08)}
+.lane-names{background:linear-gradient(90deg,#08101f,#0a1324);border-right:1px solid rgba(79,208,255,.12)}
+.lane-names span{color:#7f90b0}
+.cursor{background:var(--orange);box-shadow:0 0 10px var(--orange)}
+.lane-rule{stroke:rgba(79,208,255,.10)}
+.m-ok{stroke:#9fb4d8;stroke-opacity:.35}
+.m-info{stroke:#cfe0ff}
+.m-bad{stroke:var(--rose);filter:drop-shadow(0 0 4px rgba(255,93,143,.75))}
+.m-hit{stroke:var(--orange)}
+.pen{stroke:var(--orange);filter:drop-shadow(0 0 6px var(--orange))}
+.splice-line{stroke:var(--violet)}
+.window{fill:rgba(79,208,255,.07)}
+.readout{border-left:0;border-radius:12px;padding:10px 14px;background:#070d19;box-shadow:var(--well);color:var(--ink-2)}
+.readout.bad{box-shadow:var(--well),inset 3px 0 0 var(--rose)}
+
+/* Verdict: stacked cards, coloured by what the recorder knows. */
+.verdict{gap:10px}
+.v-conclusion .word{color:var(--orange-ink)}
+.v-conclusion .word.unknown{color:var(--ink);text-decoration-color:var(--violet)}
+.v-row{border-top:0;padding:16px 18px;border-radius:14px;background:var(--raised);
+  box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(120,150,210,.10)}
+.v-tag{padding:4px 10px;border-radius:999px;font-size:12px}
+.v-tag.supported{color:#06202f;background:linear-gradient(180deg,#8be1ff,#47c3f3);box-shadow:0 0 14px -4px rgba(79,208,255,.8)}
+.v-tag.possible{color:#e9e2ff;background:var(--violet-wash);box-shadow:inset 0 0 0 1px rgba(165,139,255,.45)}
+.v-tag.ruled_out{color:var(--muted);background-color:rgba(120,150,210,.06)}
+.cite{background:var(--orange-wash);color:var(--orange-ink);border-radius:6px;box-shadow:inset 0 0 0 1px rgba(79,208,255,.25)}
+.cite:hover,.cite:focus-visible{background:var(--orange);color:#06202f}
+.blind{border:0;border-radius:14px;
+  background:repeating-linear-gradient(135deg,rgba(127,144,176,.07) 0 8px,transparent 8px 16px),#0d1628;
+  box-shadow:inset 0 0 0 1px rgba(127,144,176,.22)}
+
+/* How: raised tiles; numbers are a real sequence. */
+.steps{gap:14px}
+.steps li{border-top:0;padding:18px;border-radius:16px;background:var(--raised);box-shadow:var(--hi),var(--sh-1);
+  border:1px solid rgba(120,150,210,.10)}
+.steps li::before{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;margin-bottom:12px;
+  color:#06202f;background:linear-gradient(180deg,#8be1ff,#47c3f3);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 3px 0 #1b7fae}
+.diagram{padding:20px;border-radius:var(--r-lg);background:#08101f;box-shadow:var(--well)}
+.d-box{fill:#14213b;stroke:rgba(120,150,210,.3)}
+.d-box.accent{fill:#0d2236;stroke:var(--orange)}
+.d-line{stroke:rgba(79,208,255,.35)}
+
+/* Measured: instrument readouts. */
+.ledger{gap:12px;border-top:0}
+.ledger div{padding:18px;border-bottom:0;border-radius:16px;background:var(--raised);box-shadow:var(--hi),var(--sh-1);
+  border:1px solid rgba(120,150,210,.10)}
+.ledger dd{background:linear-gradient(180deg,#f4f8ff,#8fd8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ledger a{color:var(--muted)}
+
+/* Status: two cards with status lights. */
+.status-cols{gap:14px}
+.status-cols>div{padding:20px;border-radius:16px;background:var(--raised);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(120,150,210,.10)}
+.status-cols li{border-top:1px solid rgba(120,150,210,.10);padding-left:20px;position:relative}
+.status-cols li::before{content:"";position:absolute;left:2px;top:17px;width:7px;height:7px;border-radius:50%;
+  background:var(--ok);box-shadow:0 0 8px rgba(95,227,176,.7)}
+#status-not li::before{background:transparent;box-shadow:inset 0 0 0 1.5px var(--muted)}
+.foot{border-top:1px solid rgba(120,150,210,.10)}
+
+@media (max-width:560px){.picker{padding-right:40px}.tape-head{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){.rec i{animation:none}}

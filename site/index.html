@@ -4,11 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hostmortem: a flight recorder for Linux edge boxes</title>
-<meta name="description" content="Hostmortem records what a Linux edge box was doing before it failed, keeps it through the reboot, and separates what it knows from what it suspects and what it cannot see. Real lab incidents, replayed.">
-<meta name="theme-color" content="#f2eee4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#13120f" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Hostmortem records what a Linux edge box was doing before it failed, keeps it through the reboot, and separates what it knows from what it suspects and what it cannot see. Install it with one command on Ubuntu, Debian or Raspberry Pi OS.">
+<meta name="theme-color" content="#0b1322">
 <meta property="og:title" content="Hostmortem">
-<meta property="og:description" content="A flight recorder for Linux edge boxes. Real faults, replayed with their evidence.">
+<meta property="og:description" content="A flight recorder for Linux edge boxes. One-command install for Ubuntu, Debian and Raspberry Pi OS; real lab incidents as examples.">
 <meta property="og:image" content="https://yousofselim.com/hostmortem-showcase/og.png">
 <meta property="og:url" content="https://yousofselim.com/hostmortem-showcase/">
 <meta name="twitter:card" content="summary_large_image">
@@ -20,19 +19,20 @@
 <script src="app.js" defer></script>
 </head>
 <body>
-<a class="skip" href="#replay">Skip to the replay</a>
+<a class="skip" href="#install">Skip to install</a>
 
 <header class="top">
   <a class="mark" href="#" aria-label="Hostmortem, top of page">
     <svg viewBox="0 0 32 32" aria-hidden="true" class="mark-glyph">
-      <rect width="32" height="32" rx="7" fill="#e2470e"/>
-      <path class="lanes" d="M6 10.5H9M12 10.5H13.5M18.5 10.5H26M6 16H13.5M18.5 16H20.5M23.5 16H26M9 21.5H13.5M18.5 21.5H23" stroke="#f8f3ea" stroke-width="2.6" stroke-linecap="round"/>
-      <path class="splice" d="M16 6V26" stroke="#1d1b17" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2.2 2.2"/>
+      <defs><linearGradient id="mk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8be1ff"/><stop offset="1" stop-color="#3a8fd8"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#mk)"/>
+      <path class="lanes" d="M6 10.5H9M12 10.5H13.5M18.5 10.5H26M6 16H13.5M18.5 16H20.5M23.5 16H26M9 21.5H13.5M18.5 21.5H23" stroke="#06202f" stroke-width="2.6" stroke-linecap="round"/>
+      <path class="splice" d="M16 6V26" stroke="#f4f8ff" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2.2 2.2"/>
     </svg>
     <span>hostmortem</span>
   </a>
   <nav aria-label="Sections">
-    <a href="#replay">Replay</a>
+    <a href="#install">Install</a>
+    <a href="#examples">Examples</a>
     <a href="#how">How</a>
     <a href="#measured">Measured</a>
     <a href="#status">Status</a>
@@ -40,11 +40,28 @@
 </header>
 
 <main>
-  <section class="hero" id="replay" aria-labelledby="hero-title">
+  <section class="hero" aria-labelledby="hero-title">
     <h1 id="hero-title">It was fine, then it wasn’t, then someone rebooted it.<br><span>Hostmortem keeps the minutes before.</span></h1>
     <p class="lede">A recorder for Linux gateways and edge boxes. It writes kernel, network and service evidence to disk, survives the reboot, and answers with what it <em>knows</em>, what it <em>suspects</em> and what it <em>could not see</em>.</p>
-    <p class="get get-hero"><a class="get-primary" href="https://github.com/yeegz/hostmortem/releases/tag/v0.1.0">Download v0.1.0</a> <a href="https://github.com/yeegz/hostmortem">Open source on GitHub</a></p>
 
+    <div class="install" id="install">
+      <h2 class="install-title">Install</h2>
+      <p class="install-for">Ubuntu 22.04 or 24.04, Debian 12 or 13, Raspberry Pi OS (64-bit). amd64 and arm64. Needs sudo.</p>
+      <div class="install-cmd">
+        <pre><code id="install-line">curl -fsSL https://github.com/yeegz/hostmortem/releases/latest/download/install.sh | sudo sh</code></pre>
+        <button class="copy-btn" type="button" data-copy="install-line" hidden>Copy</button>
+      </div>
+      <p class="install-note">It checks the package against the release’s SHA-256 sums, installs it with apt and starts the <code>hmd</code> service. Re-run it to upgrade; your evidence is kept.</p>
+      <ol class="install-steps">
+        <li><code>sudo hm drill</code><span>records a harmless test incident: a process killed with SIGKILL, seen by the live agent</span></li>
+        <li><code>sudo hm explain 1</code><span>the diagnosis: what it knows, what it suspects, what it could not see</span></li>
+        <li><code>sudo hm report</code><span>every incident as one self-contained HTML file to open or send (<code>--redact</code> hides addresses)</span></li>
+      </ol>
+      <p class="get"><a class="get-primary" href="https://github.com/yeegz/hostmortem/blob/main/docs/QUICKSTART.md">Quickstart</a> <a href="https://github.com/yeegz/hostmortem/releases/latest">Latest release</a> <a href="https://github.com/yeegz/hostmortem">Source on GitHub</a></p>
+    </div>
+
+    <h2 class="examples-title" id="examples">Example incidents from the lab</h2>
+    <p class="examples-note">Real faults injected into Linux network namespaces, recorded by the agent and diagnosed by <code>hm explain</code>. Pick one and move along the tape.</p>
     <div class="picker" role="tablist" aria-label="Real lab incidents">
       <span class="picker-ink" aria-hidden="true"></span>
     </div>
@@ -52,7 +69,7 @@
     <figure class="tape-wrap">
       <div class="tape-head">
         <p class="tape-what" id="tape-what"></p>
-        <button class="replay-btn" type="button" id="replay-btn" aria-label="Replay the tape">Replay</button>
+        <div class="tape-tools"><span class="rec" aria-hidden="true"><i></i>Lab replay</span><button class="replay-btn" type="button" id="replay-btn" aria-label="Replay the tape">Replay</button></div>
       </div>
       <div class="tape" id="tape" tabindex="0" role="group" aria-roledescription="recorder tape"
            aria-describedby="tape-help readout">
@@ -105,8 +122,8 @@
         <text class="d-label" x="588" y="78" text-anchor="middle">events.db</text>
         <text class="d-sub" x="588" y="93" text-anchor="middle">SQLite WAL</text>
         <path class="d-line" d="M636 80 H680"/>
-        <text class="d-label" x="684" y="76">hm explain</text>
-        <text class="d-sub" x="684" y="92">text · JSON · HTML</text>
+        <text class="d-label" x="684" y="76">hm explain, hm report</text>
+        <text class="d-sub" x="684" y="92">text · JSON · HTML file</text>
         <path class="d-line dashed" d="M438 102 V136 H588 V102"/>
         <text class="d-sub" x="513" y="152" text-anchor="middle">detector opens and closes incidents</text>
       </svg>
@@ -116,7 +133,7 @@
   <section class="measured" id="measured" aria-labelledby="measured-title">
     <h2 id="measured-title">Measured, with the script that measured it</h2>
     <dl class="ledger" id="ledger"></dl>
-    <p class="fine">Measured in an Ubuntu 24.04 arm64 container on an Apple M1 Pro (Colima VM, 4 vCPU). Not a Raspberry Pi; Pi numbers come later.</p>
+    <p class="fine">Lab, throughput and durability: an Ubuntu 24.04 arm64 container on an Apple M1 Pro. Install and memory: the installed service on fresh Debian 12 and Ubuntu 22.04/24.04 VMs, amd64 and arm64. Not a Raspberry Pi yet.</p>
   </section>
 
   <section class="status" id="status" aria-labelledby="status-title">
@@ -132,7 +149,7 @@
       </div>
     </div>
     <p class="fine">C++20, SQLite, Linux interfaces only. Open source under Apache-2.0. Every incident above comes from the lab’s own output files, unedited apart from shortening.</p>
-    <p class="get"><a class="get-primary" href="https://github.com/yeegz/hostmortem/releases/tag/v0.1.0">Download v0.1.0</a> <a href="https://github.com/yeegz/hostmortem">Source on GitHub</a></p>
+    <p class="get"><a class="get-primary" href="#install">Install</a> <a href="https://github.com/yeegz/hostmortem/blob/main/docs/QUICKSTART.md">Quickstart</a> <a href="https://github.com/yeegz/hostmortem">Source on GitHub</a></p>
   </section>
 </main>
 

@@ -103,27 +103,27 @@ def build(key, label, injected):
 
 
 MEASURED = [
+    {"value": "1 command", "label": "to install on Ubuntu 22.04/24.04, Debian 12/13 or Raspberry Pi OS; tested on fresh VMs with systemd, amd64 and arm64, on every push", "how": "https://github.com/yeegz/hostmortem/blob/main/scripts/install-smoke.sh"},
     {"value": "11 of 11", "label": "real injected faults diagnosed as expected, including two honest “unknown”s", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
     {"value": "0 dropped", "label": "at 20,000 events/s, with every commit fsynced to disk (10 runs)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
     {"value": "≤ 1.4 s", "label": "of evidence lost when a VM running it was hard-reset mid-incident (2 runs); the incident survived the reboot", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "6.4 MB", "label": "agent memory (RSS) after 60 s idle (3 runs); research target < 30 MB", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
-    {"value": "1.9 s", "label": "of evidence lost when the agent itself was SIGKILLed mid-incident (bound: 5 s)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
-    {"value": "84", "label": "unit, integration and scenario tests, clean under ASan + UBSan and TSan in CI on amd64 and arm64", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
+    {"value": "5.9–7.1 MB", "label": "memory (RSS) of the installed service after 60 s on 4 fresh VMs, amd64 and arm64; target < 30 MB", "how": "https://github.com/yeegz/hostmortem/blob/main/docs/PERFORMANCE.md"},
+    {"value": "92", "label": "unit, integration, scenario and live-drill tests, clean under ASan + UBSan and TSan in CI on amd64 and arm64", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/testing.md"},
 ]
 STATUS = {
     "working": [
+        "One-command install for Ubuntu, Debian and Raspberry Pi OS (64-bit), amd64 and arm64",
+        "hm drill: a first real incident in about ten seconds on a fresh install",
+        "hm report: every incident as one self-contained HTML file, with optional address redaction",
         "C++20 agent and CLI: queue, SQLite WAL store, five collectors, detector, 12 playbooks",
-        "Real-fault lab: 11 scenarios, including a real OOM kill",
-        "Hard reset of a VM mid-incident: evidence and the incident survive",
-        "Open source (Apache-2.0) with v0.1.0 packages for amd64 and arm64",
-        "Text, JSON and self-contained HTML incident reports",
-        "Fuzz targets for every parser; sanitizer CI on amd64 and arm64",
+        "Real-fault lab: 11 scenarios, including a real OOM kill; VM hard reset mid-incident survives",
+        "Fuzz targets for every parser; sanitizer CI on amd64 and arm64; open source (Apache-2.0)",
     ],
     "not": [
+        "Runs on Raspberry Pi hardware: not measured yet",
         "A physical power-cut test on real hardware",
-        "eBPF tracepoints (v0.2)",
-        "Raspberry Pi and x86 hardware measurements",
-        "Web UI (v1.0) and the optional ESP32 peer",
+        "eBPF tracepoints (planned for v0.3)",
+        "A live web UI (v1.0) and the optional ESP32 peer",
     ],
 }
 
