@@ -1,7 +1,4 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/hero-dark.png">
-  <img alt="The Hostmortem replay: a recorder tape with five lanes showing a real upstream DNS outage, and the verdict underneath" src="docs/hero-light.png">
-</picture>
+![Hostmortem replay showing five lanes of recorded events from an upstream DNS failure](docs/hero-dark.png)
 
 # Hostmortem
 
@@ -33,7 +30,7 @@ This repository holds the project site and its data and verification scripts.
 
 - **Says “unknown” when that’s the truth.** Twelve deterministic playbooks score
   evidence for and against. If nothing is supported, or two explanations tie,
-  the answer is unknown, along with what it could not see. No AI decides anything.
+  the answer is unknown, along with what it could not see.
 - **Every claim cites an event.** Each hypothesis links to stored event ids (`#112`);
   a release gate rejects any that does not.
 - **Time it can trust.** Boot order first, then CLOCK_BOOTTIME. Wall time is
@@ -45,16 +42,15 @@ This repository holds the project site and its data and verification scripts.
 
 Eleven faults injected into Linux network namespaces (iptables, `ip link`, tc
 netem, `kill -9`, dropped capabilities, SIGKILL of the agent itself, a real
-cgroup OOM kill, CPU saturation, a crash-restart loop): **11 of 11 diagnosed
-as expected**, including two honest “unknown”s.
+cgroup OOM kill, CPU saturation, a crash-restart loop): **11 of 11 met their diagnosis checks**. Some recordings are inconclusive overall.
 Details and the bugs the lab caught: [docs/lab.md](docs/lab.md).
-Unedited `hm explain --html` reports: [site/reports](site/reports/).
+`hm explain --html` reports rendered from the original lab stores: [site/reports](site/reports/).
 
 | | |
 |---|---|
 | Hard reset mid-incident (VM) | **≤ 1.4 s** of evidence lost in 2 runs; the incident survived the reboot (after fixing a durability bug this test found) |
 | Throughput | **20,000 events/s, 0 dropped** in 10 runs with every commit fsynced; at 50,000/s this VM drops some (each drop recorded) |
-| Install | v0.2.0 `.deb` for amd64 and arm64 plus `install.sh` ([release](https://github.com/yeegz/hostmortem/releases/tag/v0.2.0)); install → service → `hm drill` → `hm report` → purge passes on fresh Ubuntu 22.04/24.04 VMs (amd64, arm64) in CI and fresh Debian 12 / Ubuntu 24.04 VMs; `systemd-analyze security` exposure **2.6–2.8 (OK)** |
+| Install | v0.2.1 `.deb` for amd64 and arm64 plus `install.sh` ([release](https://github.com/yeegz/hostmortem/releases/tag/v0.2.1)); install → service → `hm drill` → `hm report` → purge passes on fresh Ubuntu 22.04/24.04 VMs (amd64, arm64) in CI and fresh Debian 12 / Ubuntu 24.04 VMs; `systemd-analyze security` exposure **2.6–2.8 (OK)** |
 | Agent memory | **5.9–7.1 MB** RSS, 0.13–0.25 % of one core: the installed service on 4 fresh VMs, 60 s (target < 30 MB) |
 | SIGKILL mid-incident | 1.94 s of evidence lost (bound 5 s), store intact, same incident |
 | Tests | 92, clean under ASan + UBSan and TSan (CI on amd64 and arm64) |
@@ -68,15 +64,15 @@ C++20 agent (`hmd`) and CLI (`hm`). Five collectors (procfs, rtnetlink,
 `/dev/kmsg`, active DNS/ICMP/TCP probes, process watch) feed a bounded queue.
 One writer commits to SQLite in WAL mode, a detector opens incidents, and
 `hm explain` writes text, JSON or a self-contained HTML report. It runs as a
-dedicated user with two capabilities. eBPF tracepoints come in v0.2.
+dedicated user with two capabilities. eBPF tracepoints are planned for v0.3.
 
 ## Status
 
 | Working | Not yet |
 |---|---|
 | Engine, CLI, 12 playbooks, reports | Physical power-cut test on real hardware |
-| VM hard-reset test | eBPF probes (v0.2) |
-| 11-scenario real-fault lab | eBPF probes (v0.2) |
+| VM hard-reset test | eBPF probes (v0.3) |
+| 11-scenario real-fault lab | |
 | Sanitizer and fuzz targets | Raspberry Pi and x86 hardware numbers |
 | Open source, packages, hardened systemd unit | Web UI (v1.0) and the optional ESP32 peer |
 

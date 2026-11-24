@@ -95,7 +95,8 @@ def build(key, label, injected):
                      "missing": [ev["note"] for ev in hy["evidence"] if ev["role"] == "missing"]})
     if d.get("synthetic"):
         raise SystemExit(f"{key}: refusing synthetic data on the real-lab page")
-    return {"key": key.replace("_", "-"), "label": label, "injected": injected, "report": f"reports/{key}.html",
+    return {"key": key.replace("_", "-"), "label": label, "injected": injected,
+            "report": f"reports/{key}.html", "incidentId": inc["id"],
             "conclusion": {"verdict": d["conclusion"]["verdict"], "reason": d["conclusion"]["reason"]},
             "hypotheses": hyps, "unobservable": d["unobservable"],
             "window": {"open": 0, "close": close_t}, "range": [lo - pad, hi + pad],
@@ -103,8 +104,8 @@ def build(key, label, injected):
 
 
 MEASURED = [
-    {"value": "1 command", "label": "to install on Ubuntu 22.04/24.04, Debian 12/13 or Raspberry Pi OS; tested on fresh VMs with systemd, amd64 and arm64, on every push", "how": "https://github.com/yeegz/hostmortem/blob/main/scripts/install-smoke.sh"},
-    {"value": "11 of 11", "label": "real injected faults diagnosed as expected, including two honest “unknown”s", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
+    {"value": "1 command", "label": "to install on Ubuntu 22.04/24.04, Debian 12/13 or Raspberry Pi OS; tested on Debian and Ubuntu in CI, amd64 and arm64", "how": "https://github.com/yeegz/hostmortem/blob/main/scripts/install-smoke.sh"},
+    {"value": "11 of 11", "label": "real fault scenarios met their diagnosis checks", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
     {"value": "0 dropped", "label": "at 20,000 events/s, with every commit fsynced to disk (10 runs)", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/performance.md"},
     {"value": "≤ 1.4 s", "label": "of evidence lost when a VM running it was hard-reset mid-incident (2 runs); the incident survived the reboot", "how": "https://github.com/yeegz/hostmortem-showcase/blob/main/docs/lab.md"},
     {"value": "5.9–7.1 MB", "label": "memory (RSS) of the installed service after 60 s on 4 fresh VMs, amd64 and arm64; target < 30 MB", "how": "https://github.com/yeegz/hostmortem/blob/main/docs/PERFORMANCE.md"},

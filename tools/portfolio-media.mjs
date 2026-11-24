@@ -1,54 +1,46 @@
-// Captures portfolio media from the live showcase (real lab data) as PNGs;
-// tools/portfolio-media.sh converts them to WebP size variants.
-// Usage: NODE_PATH=<node_modules with playwright> node tools/portfolio-media.mjs <url> <outdir>
-import { createRequire } from "module";
-import fs from "fs";
+// Capture real showcase and CLI output for the portfolio.
+// Usage: NODE_PATH=<playwright modules> node tools/portfolio-media.mjs <showcase-url> <outdir> [report-url]
+import { createRequire } from "node:module";
+import { mkdir } from "node:fs/promises";
+
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
-const url = process.argv[2] || "https://yousofselim.com/hostmortem-showcase/";
+const url = new URL(process.argv[2] || "http://127.0.0.1:5241/");
 const out = process.argv[3] || "/tmp/hm-media";
-fs.mkdirSync(out, { recursive: true });
+const report = process.argv[4] || new URL("reports/dns_upstream.html", url).href;
+await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ channel: process.env.PW_CHANNEL || "chrome" });
 
-async function shot(name, hash, { w, h, dpr, scheme = "light", top = 0, extra } = {}) {
-  const p = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: dpr, colorScheme: scheme, reducedMotion: "reduce" });
-  await p.goto(url + hash, { waitUntil: "networkidle" });
-  await p.evaluate((top) => {
-    document.querySelector(".top").style.display = "none";
-    const t = document.querySelector(".picker");
-    scrollTo(0, t.getBoundingClientRect().top + scrollY - top);
-  }, top);
-  if (extra) await extra(p);
-  await p.waitForTimeout(300);
-  await p.screenshot({ path: `${out}/${name}.png` });
-  await p.close();
+async function shot(name, { path = "", target, width = 1440, height = 900, scale = 2, section, offset = 82, transparent = false } = {}) {
+  const page = await browser.newPage({
+    viewport: { width, height }, deviceScaleFactor: scale,
+    reducedMotion: "reduce", colorScheme: "dark",
+  });
+  try {
+    await page.goto(target || new URL(path, url).href);
+    await page.evaluate(() => document.fonts.ready);
+    if (section) {
+      await page.locator(section).evaluate((element, top) => {
+        window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - top);
+      }, offset);
+    }
+    await page.screenshot({ path: `${out}/${name}.png`, omitBackground: transparent });
+  } finally {
+    await page.close();
+  }
 }
-const hover = (frac) => async (p) => {
-  const b = await (await p.$("#tape")).boundingBox();
-  await p.mouse.move(b.x + b.width * frac, b.y + 40);
-};
 
-// Homepage card, 1600x1000: the tape and the start of the verdict.
-await shot("card", "#dns-upstream", { w: 1280, h: 800, dpr: 1.25, top: 24, extra: hover(0.5) });
-// Case-study screens, 2880x1920.
-await shot("replay", "#dns-upstream", { w: 1440, h: 960, dpr: 2, top: 24, extra: hover(0.5) });
-await shot("unknown", "#missing-kmsg", { w: 1440, h: 960, dpr: 2, top: 24 });
-await shot("crash", "#agent-crash", { w: 1440, h: 960, dpr: 2, top: 24, extra: hover(0.52) });
-await shot("dark", "#link-down", { w: 1440, h: 960, dpr: 2, scheme: "dark", top: 24, extra: hover(0.3) });
-{
-  const p = await browser.newPage({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 2, colorScheme: "light" });
-  await p.goto(url + "reports/kill9.html", { waitUntil: "networkidle" });
-  await p.screenshot({ path: `${out}/report.png` });
-  await p.close();
+try {
+  await shot("install");
+  await shot("phone", { width: 390, height: 844, scale: 3 });
+  await shot("card", { path: "#dns-upstream", section: ".picker", width: 1280, height: 800, scale: 1.25 });
+  await shot("replay", { path: "#dns-upstream", section: ".picker" });
+  await shot("unknown", { path: "#missing-kmsg", section: ".picker" });
+  await shot("how", { section: "#how-title", offset: 102 });
+  await shot("measured", { section: "#measured-title", offset: 102 });
+  await shot("report", { target: report });
+  await shot("icon", { path: "brand/icon.svg", width: 512, height: 512, scale: 1, transparent: true });
+} finally {
+  await browser.close();
 }
-// App icon from the showcase favicon.
-{
-  const p = await browser.newPage({ viewport: { width: 192, height: 192 } });
-  await p.goto(url + "reports/");
-  await p.setContent(`<body style="margin:0;background:transparent"><img src="${url}favicon.svg" width="192" height="192"></body>`);
-  await p.waitForTimeout(200);
-  await p.screenshot({ path: `${out}/icon.png`, omitBackground: true });
-  await p.close();
-}
-await browser.close();
-console.log("captured to", out);
+console.log("Captured showcase, report and icon in " + out);

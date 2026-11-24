@@ -54,6 +54,8 @@ for (const scheme of ["light", "dark"]) {
 }
 {
   const [ctx, p] = await open({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
+  await p.goto(new URL("#install", url).href, { waitUntil: "networkidle" });
+  if (new URL(p.url()).hash !== "#install") problems.push("install fragment was replaced");
   await p.goto(url, { waitUntil: "networkidle" });
   await p.screenshot({ path: `${out}/phone-hero.png` });
   await toTape(p);
@@ -61,6 +63,21 @@ for (const scheme of ["light", "dark"]) {
   await p.screenshot({ path: `${out}/phone-tape.png` });
   const overflow = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   if (overflow > 0) problems.push(`phone: horizontal overflow ${overflow}px`);
+  await p.goto(new URL("#missing-kmsg", url).href);
+  const tab = p.getByRole("tab", { selected: true });
+  const panel = p.getByRole("tabpanel");
+  if (await panel.getAttribute("aria-labelledby") !== "tab-missing-kmsg") problems.push("incident deep link did not select its panel");
+  const before = await p.locator("#readout").innerText();
+  await p.getByRole("button", { name: "Next event" }).tap();
+  if (await p.locator("#readout").innerText() === before) problems.push("touch event step did not change readout");
+  await p.locator("#tape").press("Home");
+  if (!await p.getByRole("button", { name: "Previous event" }).isDisabled()) problems.push("first event should disable previous");
+  await tab.press("ArrowLeft");
+  if (new URL(p.url()).hash !== "#kill9") problems.push("keyboard tab selection did not update incident link");
+  const hiddenCitation = p.getByRole("link", { name: /in the full report/ }).first();
+  await hiddenCitation.click();
+  const anchor = new URL(p.url()).hash;
+  if (!anchor || await p.locator(anchor).count() !== 1) problems.push("citation for an event outside the tape did not open its report row");
   await ctx.close();
 }
 {
@@ -75,3 +92,4 @@ for (const scheme of ["light", "dark"]) {
 }
 await browser.close();
 console.log(problems.length ? "PROBLEMS:\n" + problems.join("\n") : "no problems found");
+process.exitCode = problems.length ? 1 : 0;

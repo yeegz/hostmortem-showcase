@@ -20,7 +20,7 @@ diagnosis with what the scenario expects.
 | Cable pulled | `ip link set down` on the box's interface | link/gateway supported; upstream DNS ruled out | pass |
 | kill -9 | SIGKILL a watched process | **unknown**; OOM ruled out (kernel log readable, no OOM record) | pass |
 | kill -9, kernel log hidden | same, agent without CAP_SYSLOG and CAP_SYS_ADMIN | **unknown**; OOM stays *possible*, gap listed | pass |
-| 50% packet loss | `tc netem loss 50%` | path degradation supported | pass |
+| 50% packet loss | `tc netem loss 50%` | path degradation supported. The published recording has competing DNS hypotheses and an overall verdict of unknown. | pass |
 | Latency spike | `tc netem delay 300ms 50ms` | path degradation supported | pass |
 | Agent killed mid-incident | SIGKILL `hmd` during a DNS outage, restart 3 s later | same incident continues; store passes quick_check; ≤ 5 s lost | pass (1.94 s lost, quick_check ok, 1 incident) |
 | Out of memory | a process in a 64 MiB cgroup allocates until the kernel kills it | OOM kill supported, with fresh cgroup evidence | pass |
