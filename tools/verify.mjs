@@ -36,7 +36,11 @@ for (const scheme of ["light", "dark"]) {
   await pause.waitFor();
   await pause.click();
   const playhead = p.locator(".pen");
-  const position = await playhead.evaluate((node) => node.getAnimations()[0].currentTime);
+  const position = await playhead.evaluate(async (node) => {
+    const animation = node.getAnimations()[0];
+    await animation.ready;
+    return animation.currentTime;
+  });
   await p.waitForTimeout(120);
   const paused = await playhead.evaluate((node) => node.getAnimations()[0].currentTime);
   if (paused !== position) problems.push("playhead moved while replay was paused");
