@@ -31,9 +31,11 @@ for (const scheme of ["light", "dark"]) {
   await p.goto(url, { waitUntil: "networkidle" });
   await p.screenshot({ path: `${out}/hero-${scheme}.png` });
   await toTape(p);
+  await p.getByRole("button", { name: "Replay tape" }).click();
+  if (!await p.getByRole("button", { name: "Replaying" }).isVisible()) problems.push("replay has no active state");
   await p.waitForTimeout(650);
   await p.screenshot({ path: `${out}/pen-mid-${scheme}.png` });
-  await p.waitForTimeout(1600);
+  await p.getByRole("button", { name: "Replay tape" }).waitFor();
   const box = await (await p.$("#tape")).boundingBox();
   await p.mouse.move(box.x + box.width * 0.55, box.y + 40);
   await p.waitForTimeout(250);

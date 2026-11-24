@@ -22,6 +22,7 @@ code{font:500 .9em var(--mono)}
 a{color:inherit;text-underline-offset:3px}
 a:hover{color:var(--signal-text)}
 button{font:600 14px/1.15 var(--sans);cursor:pointer}
+.control-icon{width:17px;height:17px;flex:none;display:block;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
 :focus-visible{outline:2px solid var(--signal);outline-offset:3px}
 [hidden]{display:none!important}
 .skip{position:fixed;top:8px;left:12px;z-index:10;padding:8px 12px;background:var(--ink);color:var(--paper);transform:translateY(-160%)}
@@ -50,7 +51,7 @@ main>section{padding:clamp(48px,7vw,86px) 0;border-bottom:1px solid var(--line)}
 .install-cmd pre{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;padding:10px 12px;background:var(--well);border:1px solid var(--line);border-radius:6px;color:var(--signal-text);font:400 13px/1.45 var(--mono);user-select:all}
 .install-cmd code{font:inherit}
 .copy-btn,.get-primary{border:1px solid transparent;border-radius:6px;background:var(--signal);color:var(--well);padding:0 13px;min-height:44px}
-.copy-btn{min-width:76px}
+.copy-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:89px}
 .copy-btn:hover,.get-primary:hover{background:#9be8b8;color:var(--well)}
 .copy-btn:active,.get-primary:active,.replay-btn:active,.event-buttons button:not(:disabled):active{transform:translateY(1px)}
 .install-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
@@ -76,9 +77,12 @@ main>.examples{padding-top:clamp(28px,4vw,48px)}
 .tape-head{display:flex;align-items:center;justify-content:space-between;gap:8px 18px;margin-bottom:12px}
 .tape-what{color:var(--body);font-size:14px}
 .tape-what strong{display:block;color:var(--ink);font-size:17px}
-.tape-what .full{color:var(--signal-text);white-space:nowrap;margin-left:3px}
+.tape-what .full{display:inline-flex;gap:4px;align-items:center;color:var(--signal-text);white-space:nowrap;margin-left:3px}
+.full .control-icon{width:15px;height:15px}
 .replay-btn,.event-buttons button{flex:none;padding:0 12px;min-height:44px;border:1px solid #4a5b51;border-radius:6px;background:#2b3830;color:var(--ink)}
+.replay-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:124px}
 .replay-btn:hover,.event-buttons button:not(:disabled):hover{background:#3a4b40}
+.replay-btn.is-playing{color:var(--signal-text);border-color:var(--signal)}
 .tape{--gutter-lane:86px;position:relative;height:228px;overflow:hidden;border:1px solid var(--line);border-radius:6px;cursor:crosshair;touch-action:pan-y;background:repeating-linear-gradient(90deg,transparent 0 47px,#1c2821 47px 48px),var(--well)}
 .tape svg{position:absolute;inset:0 10px 0 var(--gutter-lane);width:calc(100% - var(--gutter-lane) - 10px);height:100%;overflow:visible}
 .lane-names{position:absolute;inset:0 auto 0 0;width:calc(var(--gutter-lane) - 8px);border-right:1px solid var(--line);background:var(--well);pointer-events:none}
@@ -105,9 +109,15 @@ main>.examples{padding-top:clamp(28px,4vw,48px)}
 .readout.bad{box-shadow:inset 3px 0 var(--fault);padding-left:13px}
 .readout b{color:var(--ink);font-weight:500}
 .event-buttons{display:flex;gap:5px}
-.event-buttons button{width:44px;font-size:17px}
+.event-buttons button{display:grid;place-items:center;width:44px;padding:0}
 .event-buttons button:disabled{color:var(--muted);background:var(--well);cursor:default}
-.tape-help{margin-top:8px;color:var(--muted);font-size:13px}
+.tape-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 16px;margin-top:8px}
+.tape-help,.tape-key{color:var(--muted);font-size:13px}
+.tape-key{display:flex;flex-wrap:wrap;gap:4px 11px;list-style:none;margin:0;padding:0}
+.tape-key li{display:flex;align-items:center;gap:4px}
+.tape-key span{display:inline-block;width:3px;height:10px;border-radius:2px;background:#849a8d}
+.tape-key .key-fault{background:var(--fault)}
+.tape-key .key-window{width:12px;background:#6fdc9a24;border:1px solid #658676}
 
 .verdict{margin-top:20px}
 .v-conclusion{font-size:24px;font-weight:700;letter-spacing:-.03em}

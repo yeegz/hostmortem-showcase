@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#141a17">
 <meta property="og:title" content="Hostmortem">
 <meta property="og:description" content="A flight recorder for Linux edge boxes. One-command install for Ubuntu, Debian and Raspberry Pi OS; real lab incidents as examples.">
-<meta property="og:image" content="https://yousofselim.com/hostmortem-showcase/og.png?v=2">
+<meta property="og:image" content="https://yousofselim.com/hostmortem-showcase/og.png?v=3">
 <meta property="og:url" content="https://yousofselim.com/hostmortem-showcase/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://yousofselim.com/hostmortem-showcase/">
@@ -50,7 +50,10 @@
       <p class="install-for">Ubuntu 22.04 / 24.04, Debian 12 / 13, or Raspberry Pi OS (64-bit). amd64 and arm64. Requires sudo.</p>
       <div class="install-cmd">
         <pre><code id="install-line">curl -fsSL https://github.com/yeegz/hostmortem/releases/latest/download/install.sh | sudo sh</code></pre>
-        <button class="copy-btn" type="button" data-copy="install-line" hidden>Copy</button>
+        <button class="copy-btn" type="button" data-copy="install-line" hidden>
+          <svg class="control-icon" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="9" height="9" rx="1.4"/><path d="M12 4H5a1 1 0 0 0-1 1v7"/></svg>
+          <span aria-live="polite">Copy</span>
+        </button>
       </div>
       <p class="install-note">The installer verifies the package, starts <code>hmd</code> and keeps your evidence on upgrades.</p>
       <ol class="install-steps">
@@ -79,7 +82,10 @@
       <figure class="tape-wrap">
         <div class="tape-head">
           <figcaption class="tape-what" id="tape-what"></figcaption>
-          <button class="replay-btn" type="button" id="replay-btn">Replay tape</button>
+          <button class="replay-btn" type="button" id="replay-btn">
+            <svg class="control-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6V4Z"/></svg>
+            <span aria-live="polite">Replay tape</span>
+          </button>
         </div>
         <div class="tape" id="tape" tabindex="0" role="group" aria-roledescription="recorder tape"
              aria-describedby="tape-help">
@@ -90,11 +96,22 @@
         <div class="event-controls">
           <output class="readout" id="readout" aria-live="polite"></output>
           <div class="event-buttons">
-            <button type="button" id="event-prev" aria-label="Previous event">←</button>
-            <button type="button" id="event-next" aria-label="Next event">→</button>
+            <button type="button" id="event-prev" aria-label="Previous event">
+              <svg class="control-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m9 5-5 5 5 5M4 10h12"/></svg>
+            </button>
+            <button type="button" id="event-next" aria-label="Next event">
+              <svg class="control-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m11 5 5 5-5 5M16 10H4"/></svg>
+            </button>
           </div>
         </div>
-        <p class="tape-help" id="tape-help">Select a mark or use the arrow buttons. On the tape, Shift + arrow jumps to the next or previous fault.</p>
+        <div class="tape-footer">
+          <p class="tape-help" id="tape-help">Select a mark or use the arrows. Shift + arrow jumps between faults on the tape.</p>
+          <ul class="tape-key" aria-label="Tape legend">
+            <li><span class="key-event" aria-hidden="true"></span>Event</li>
+            <li><span class="key-fault" aria-hidden="true"></span>Fault</li>
+            <li><span class="key-window" aria-hidden="true"></span>Incident window</li>
+          </ul>
+        </div>
       </figure>
 
       <div class="verdict" id="verdict" aria-live="polite"></div>

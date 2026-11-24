@@ -6,11 +6,14 @@
   for (const b of document.querySelectorAll(".copy-btn")) {
     const src = document.getElementById(b.dataset.copy);
     if (!src || !navigator.clipboard) continue;
+    const label = b.querySelector("span");
+    let reset;
     b.hidden = false;
     b.addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText(src.textContent); b.textContent = "Copied"; }
-      catch { b.textContent = "Select and copy"; }
-      setTimeout(() => { b.textContent = "Copy"; }, 2000);
+      clearTimeout(reset);
+      try { await navigator.clipboard.writeText(src.textContent); label.textContent = "Copied"; }
+      catch { label.textContent = "Select and copy"; }
+      reset = setTimeout(() => { label.textContent = "Copy"; }, 2000);
     });
   }
 })();
@@ -35,6 +38,8 @@
   const what = $("#tape-what");
   const verdict = $("#verdict");
   const panel = $("#incident-panel");
+  const replayButton = $("#replay-btn");
+  const replayLabel = $("span", replayButton);
   const previous = $("#event-prev");
   const next = $("#event-next");
 
@@ -112,6 +117,7 @@
     // its x position, so the browser runs the whole pass on the compositor
     // with no per-frame JavaScript.
     const play = animate && !reduce;
+    setPlaying(play);
     const DUR = 1400;
     const passAt = (x) => DUR * (1 - Math.cbrt(1 - x / W)); // inverse of the pen's ease-out
     const marks = svgEl("g", {});
@@ -127,10 +133,19 @@
     if (play) {
       const pen = svgEl("line", { x1: 0, x2: 0, y1: 0, y2: hgt, class: "pen", ...ns });
       pen.style.setProperty("--pen-w", W + "px");
-      pen.addEventListener("animationend", () => pen.remove(), { once: true });
+      pen.addEventListener("animationend", () => {
+        pen.remove();
+        setPlaying(false);
+      }, { once: true });
       svg.append(pen);
     }
 
+  }
+
+  function setPlaying(playing) {
+    replayButton.classList.toggle("is-playing", playing);
+    const label = playing ? "Replaying" : "Replay tape";
+    if (replayLabel.textContent !== label) replayLabel.textContent = label;
   }
 
   function nearestByX(px) {
@@ -249,8 +264,10 @@
     x1 = current.range[1];
     sel = -1;
     tape.setAttribute("aria-label", `Recorder tape for ${current.label}: ${ordered.length} events in ${LANES.length} lanes`);
+    const file = svgEl("svg", { class: "control-icon", viewBox: "0 0 20 20", "aria-hidden": "true" });
+    file.append(svgEl("path", { d: "M5 3h6l4 4v10H5zM11 3v4h4M8 11h4m-4 3h4" }));
     what.replaceChildren(h("strong", null, current.label), " ", current.injected, " ",
-      h("a", { href: current.report, class: "full" }, "Full report"));
+      h("a", { href: current.report, class: "full" }, file, "Full report"));
     redraw(false);
     renderVerdict();
     if (updateUrl) history.replaceState(null, "", "#" + current.key);
@@ -264,7 +281,10 @@
       readout.textContent = "No events in this recording.";
     }
   }
-  $("#replay-btn").addEventListener("click", () => redraw(true));
+  replayButton.addEventListener("click", () => {
+    sel = ordered.length ? 0 : -1;
+    redraw(true);
+  });
 
   let rt;
   addEventListener("resize", () => {
