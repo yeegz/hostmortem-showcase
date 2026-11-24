@@ -25,15 +25,23 @@ const toTape = (p) => p.evaluate(() => {
 });
 
 for (const scheme of ["light", "dark"]) {
-  const [ctx, p] = await open({ viewport: { width: 1280, height: 860 }, colorScheme: scheme, deviceScaleFactor: 2 });
+  const [ctx, p] = await open({ viewport: { width: 1280, height: 860 }, colorScheme: scheme, reducedMotion: "no-preference", deviceScaleFactor: 2 });
   let bytes = 0;
   p.on("response", async (r) => { try { bytes += (await r.body()).length; } catch {} });
   await p.goto(url, { waitUntil: "networkidle" });
   await p.screenshot({ path: `${out}/hero-${scheme}.png` });
   await toTape(p);
   await p.getByRole("button", { name: "Replay tape" }).click();
-  if (!await p.getByRole("button", { name: "Replaying" }).isVisible()) problems.push("replay has no active state");
-  await p.waitForTimeout(650);
+  const pause = p.getByRole("button", { name: "Pause replay" });
+  await pause.waitFor();
+  await pause.click();
+  const playhead = p.locator(".pen");
+  const position = await playhead.evaluate((node) => node.getAnimations()[0].currentTime);
+  await p.waitForTimeout(120);
+  const paused = await playhead.evaluate((node) => node.getAnimations()[0].currentTime);
+  if (paused !== position) problems.push("playhead moved while replay was paused");
+  await p.getByRole("button", { name: "Resume replay" }).click();
+  await p.waitForTimeout(520);
   await p.screenshot({ path: `${out}/pen-mid-${scheme}.png` });
   await p.getByRole("button", { name: "Replay tape" }).waitFor();
   const box = await (await p.$("#tape")).boundingBox();
@@ -44,7 +52,7 @@ for (const scheme of ["light", "dark"]) {
     const tabs = await p.$$(".picker button");
     for (const tab of tabs) {
       await tab.click();
-      await p.waitForTimeout(2300);
+      await p.waitForTimeout(210);
       const key = await p.evaluate(() => location.hash.slice(1));
       await p.screenshot({ path: `${out}/incident-${key}.png` });
     }
@@ -61,7 +69,6 @@ for (const scheme of ["light", "dark"]) {
   await p.goto(url, { waitUntil: "networkidle" });
   await p.screenshot({ path: `${out}/phone-hero.png` });
   await toTape(p);
-  await p.waitForTimeout(2300);
   await p.screenshot({ path: `${out}/phone-tape.png` });
   const overflow = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   if (overflow > 0) problems.push(`phone: horizontal overflow ${overflow}px`);
@@ -72,6 +79,10 @@ for (const scheme of ["light", "dark"]) {
   const before = await p.locator("#readout").innerText();
   await p.getByRole("button", { name: "Next event" }).tap();
   if (await p.locator("#readout").innerText() === before) problems.push("touch event step did not change readout");
+  const seek = p.getByRole("slider");
+  await seek.press("End");
+  if (await seek.inputValue() !== await seek.getAttribute("max")) problems.push("event scrubber did not reach the final event");
+  if (!await p.getByRole("button", { name: "Next event" }).isDisabled()) problems.push("last event should disable next");
   await p.locator("#tape").press("Home");
   if (!await p.getByRole("button", { name: "Previous event" }).isDisabled()) problems.push("first event should disable previous");
   await tab.press("ArrowLeft");

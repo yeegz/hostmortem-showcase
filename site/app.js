@@ -11,9 +11,18 @@
     b.hidden = false;
     b.addEventListener("click", async () => {
       clearTimeout(reset);
-      try { await navigator.clipboard.writeText(src.textContent); label.textContent = "Copied"; }
-      catch { label.textContent = "Select and copy"; }
-      reset = setTimeout(() => { label.textContent = "Copy"; }, 2000);
+      try {
+        await navigator.clipboard.writeText(src.textContent);
+        b.dataset.copyState = "copied";
+        label.textContent = "Copied";
+      } catch {
+        delete b.dataset.copyState;
+        label.textContent = "Select and copy";
+      }
+      reset = setTimeout(() => {
+        delete b.dataset.copyState;
+        label.textContent = "Copy";
+      }, 2000);
     });
   }
 })();
@@ -40,12 +49,15 @@
   const panel = $("#incident-panel");
   const replayButton = $("#replay-btn");
   const replayLabel = $("span", replayButton);
+  const eventSeek = $("#event-seek");
+  const eventCount = $("#event-count");
   const previous = $("#event-prev");
   const next = $("#event-next");
 
   let current = null;
   let ordered = [];
   let sel = -1;
+  let playback = "idle";
   let x0 = 0, x1 = 1;
 
   const fmtT = (t) => (t >= 0 ? "+" : "−") + Math.abs(t).toFixed(1) + " s";
@@ -95,66 +107,95 @@
 
   function draw(animate) {
     const hgt = tape.clientHeight;
+    const axisY = hgt - 24;
     svg.setAttribute("viewBox", `0 0 ${W} ${hgt}`);
     svg.replaceChildren();
     names.replaceChildren();
     const ns = { "vector-effect": "non-scaling-stroke" };
+
+    const pattern = svgEl("pattern", { id: "incident-hatch", width: 7, height: 7, patternUnits: "userSpaceOnUse",
+      patternTransform: "rotate(36)" });
+    pattern.append(svgEl("rect", { width: 7, height: 7, fill: "#191919" }),
+      svgEl("line", { x1: 0, y1: 0, x2: 0, y2: 7, class: "window-stroke", ...ns }));
+    const defs = svgEl("defs", {});
+    defs.append(pattern);
+    const w = current.window;
+    svg.append(defs, svgEl("rect", { x: xOf(w.open), y: 0, width: Math.max(2, xOf(w.close) - xOf(w.open)), height: axisY, class: "window" }));
+
+    const left = pxOf(w.open) + 6;
+    labels.replaceChildren(h("span", { class: "tape-label", style: `left:${left}px;top:5px` }, "incident"));
+    const box = svgBox();
+    const roughStep = (x1 - x0) * 64 / box.width;
+    const step = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600].find((seconds) => seconds >= roughStep) || 900;
+    for (let time = Math.ceil(x0 / step) * step; time <= x1; time += step) {
+      const x = xOf(time);
+      const px = pxOf(time);
+      svg.append(svgEl("line", { x1: x, x2: x, y1: 0, y2: axisY + 4, class: "time-tick", ...ns }));
+      if (px - box.left >= 10 && px - box.left < box.width - 12) {
+        labels.append(h("span", { class: "time-label", style: `left:${px}px` },
+          time < 0 ? `−${-time}s` : `${time}s`));
+      }
+    }
+    svg.append(svgEl("line", { x1: 0, x2: W, y1: axisY, y2: axisY, class: "time-axis", ...ns }));
     LANES.forEach((name, l) => {
       const y = laneY(l, hgt);
       svg.append(svgEl("line", { x1: 0, x2: W, y1: y, y2: y, class: "lane-rule", ...ns }));
       names.append(h("span", { style: `top:${y}px` }, name));
     });
-    const w = current.window;
-    svg.append(svgEl("rect", { x: xOf(w.open), y: 0, width: Math.max(2, xOf(w.close) - xOf(w.open)), height: hgt, class: "window" }));
-    // Labels are HTML so they never stretch with the tape's aspect ratio.
-    labels.replaceChildren(h("span", { class: "tape-label", style: `left:${pxOf(w.open) + 6}px;top:6px` }, "incident"));
     for (const s of current.splices) {
       const x = xOf(s.t);
-      svg.append(svgEl("line", { x1: x, x2: x, y1: 0, y2: hgt, class: "splice-line", ...ns }));
-      labels.append(h("span", { class: "tape-label", style: `left:${pxOf(s.t) + 5}px;bottom:6px` }, s.label));
+      svg.append(svgEl("line", { x1: x, x2: x, y1: 0, y2: axisY, class: "splice-line", ...ns }));
+      labels.append(h("span", { class: "tape-label", style: `left:${pxOf(s.t) + 5}px;bottom:28px` }, s.label));
     }
-    // Marks ink in as the pen passes: each one's CSS animation is delayed by
-    // its x position, so the browser runs the whole pass on the compositor
-    // with no per-frame JavaScript.
+
+    // The playhead and mark delays share the same time scale.
     const play = animate && !reduce;
-    setPlaying(play);
-    const DUR = 1400;
-    const passAt = (x) => DUR * (1 - Math.cbrt(1 - x / W)); // inverse of the pen's ease-out
+    const duration = 2400;
+    tape.style.setProperty("--replay-duration", `${duration}ms`);
+    setPlayback(play ? "playing" : "idle");
     const marks = svgEl("g", {});
     for (const e of ordered) {
       const x = xOf(e.t), y = laneY(e.lane, hgt);
       const half = e.bad ? 11 : e.info ? 8 : 5;
       e.hit = svgEl("line", { x1: x, x2: x, y1: y - 14, y2: y + 14, class: "m-hit", ...ns });
       const m = svgEl("line", { x1: x, x2: x, y1: y - half, y2: y + half, class: (e.bad ? "m-bad" : e.info ? "m-info" : "m-ok") + (play ? " ink" : ""), ...ns });
-      if (play) m.style.animationDelay = Math.round(passAt(Math.max(0, Math.min(W, x)))) + "ms";
+      if (play) m.style.animationDelay = `${Math.round(duration * Math.max(0, Math.min(1, x / W)))}ms`;
       marks.append(e.hit, m);
     }
     svg.append(marks);
     if (play) {
-      const pen = svgEl("line", { x1: 0, x2: 0, y1: 0, y2: hgt, class: "pen", ...ns });
+      const pen = svgEl("g", { class: "pen" });
       pen.style.setProperty("--pen-w", W + "px");
+      pen.append(svgEl("line", { x1: 0, x2: 0, y1: 0, y2: axisY, ...ns }),
+        svgEl("circle", { cx: 0, cy: axisY, r: 2, fill: "currentColor", ...ns }));
       pen.addEventListener("animationend", () => {
         pen.remove();
-        setPlaying(false);
+        setPlayback("idle");
+        mark(ordered.length - 1);
       }, { once: true });
       svg.append(pen);
     }
-
   }
 
-  function setPlaying(playing) {
-    replayButton.classList.toggle("is-playing", playing);
-    const label = playing ? "Replaying" : "Replay tape";
+  function setPlayback(state) {
+    playback = state;
+    tape.dataset.replay = state;
+    replayButton.dataset.replay = state;
+    const label = { idle: "Replay tape", playing: "Pause replay", paused: "Resume replay" }[state];
     if (replayLabel.textContent !== label) replayLabel.textContent = label;
   }
 
-  function nearestByX(px) {
-    const b = svgBox();
-    const t = x0 + ((px - b.left) / b.width) * (x1 - x0);
-    let best = -1, bd = Infinity;
-    ordered.forEach((e, i) => {
-      const d = Math.abs(e.t - t) * (e.bad ? 0.6 : 1); // failures are easier to land on
-      if (d < bd) { bd = d; best = i; }
+  function nearestEvent(px, py) {
+    const box = svgBox();
+    if (px < box.left || px > box.left + box.width) return -1;
+    let best = -1, closest = Infinity;
+    const height = tape.clientHeight;
+    ordered.forEach((event, i) => {
+      const x = box.left + xOf(event.t) / W * box.width;
+      const dx = x - px;
+      const dy = (laneY(event.lane, height) - py) * 1.45;
+      const distance = dx * dx + dy * dy;
+      if (distance < closest) { closest = distance; best = i; }
     });
     return best;
   }
@@ -176,21 +217,31 @@
     cursor.style.transform = `translateX(${pxOf(e.t)}px)`;
     readout.classList.toggle("bad", !!e.bad);
     readout.replaceChildren(...describe(e));
+    eventSeek.value = i + 1;
+    eventSeek.style.setProperty("--seek-progress", `${100 * i / Math.max(1, ordered.length - 1)}%`);
+    eventSeek.setAttribute("aria-valuetext", `Event ${i + 1} of ${ordered.length}, ${fmtT(e.t)}, ${LANES[e.lane]}`);
+    eventCount.textContent = `Event ${i + 1} / ${ordered.length}`;
     previous.disabled = sel === 0;
     next.disabled = sel === ordered.length - 1;
   }
 
+  function seek(index) {
+    if (playback !== "idle") draw(false);
+    mark(index);
+  }
+
   function pickEvent(ev) {
     const r = tape.getBoundingClientRect();
-    const i = nearestByX(ev.clientX - r.left);
-    if (i >= 0 && i !== sel) mark(i);
+    const i = nearestEvent(ev.clientX - r.left, ev.clientY - r.top);
+    if (i >= 0 && (i !== sel || playback !== "idle")) seek(i);
   }
   tape.addEventListener("pointermove", (ev) => {
-    if (ev.pointerType === "mouse") pickEvent(ev);
+    if (ev.pointerType === "mouse" && playback === "idle") pickEvent(ev);
   });
   tape.addEventListener("click", pickEvent);
-  previous.addEventListener("click", () => mark(sel - 1));
-  next.addEventListener("click", () => mark(sel + 1));
+  eventSeek.addEventListener("input", () => seek(Number(eventSeek.value) - 1));
+  previous.addEventListener("click", () => seek(sel - 1));
+  next.addEventListener("click", () => seek(sel + 1));
   tape.addEventListener("keydown", (ev) => {
     const k = ev.key;
     if (!ordered.length || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(k)) return;
@@ -203,7 +254,7 @@
       do { i += d; } while (ev.shiftKey && ordered[i] && !ordered[i].bad); // Shift skips to failures
       i = Math.max(0, Math.min(ordered.length - 1, i));
     }
-    mark(i);
+    seek(i);
   });
 
   /* ---------- verdict ---------- */
@@ -248,7 +299,7 @@
     if (!button) return;
     const index = ordered.findIndex((item) => item.id === Number(button.dataset.id));
     if (index < 0) return;
-    mark(index);
+    seek(index);
     tape.focus({ preventScroll: true });
     tape.scrollIntoView({ block: "center", behavior: reduce ? "instant" : "smooth" });
   });
@@ -260,6 +311,8 @@
     panel.setAttribute("aria-labelledby", tabs[i].id);
     moveInk(tabs[i]);
     ordered = [...current.events].sort((a, b) => a.t - b.t);
+    eventSeek.max = Math.max(1, ordered.length);
+    eventSeek.disabled = ordered.length < 2;
     x0 = current.range[0];
     x1 = current.range[1];
     sel = -1;
@@ -282,6 +335,10 @@
     }
   }
   replayButton.addEventListener("click", () => {
+    if (playback !== "idle") {
+      setPlayback(playback === "playing" ? "paused" : "playing");
+      return;
+    }
     sel = ordered.length ? 0 : -1;
     redraw(true);
   });

@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hostmortem: a flight recorder for Linux edge boxes</title>
 <meta name="description" content="Hostmortem records what a Linux edge box was doing before it failed, keeps it through the reboot, and separates what it knows from what it suspects and what it cannot see. Install it with one command on Ubuntu, Debian or Raspberry Pi OS.">
-<meta name="theme-color" content="#141a17">
+<meta name="theme-color" content="#171717">
 <meta property="og:title" content="Hostmortem">
 <meta property="og:description" content="A flight recorder for Linux edge boxes. One-command install for Ubuntu, Debian and Raspberry Pi OS; real lab incidents as examples.">
-<meta property="og:image" content="https://yousofselim.com/hostmortem-showcase/og.png?v=3">
+<meta property="og:image" content="https://yousofselim.com/hostmortem-showcase/og.png?v=4">
 <meta property="og:url" content="https://yousofselim.com/hostmortem-showcase/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://yousofselim.com/hostmortem-showcase/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/schibsted-grotesk.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 <script src="data/incidents.js" defer></script>
-<script src="app.js" defer></script>
+<script src="app.js?v=4" defer></script>
 </head>
 <body>
 <a class="skip" href="#install">Skip to install</a>
@@ -49,9 +49,10 @@
       <h2 class="install-title">Install</h2>
       <p class="install-for">Ubuntu 22.04 / 24.04, Debian 12 / 13, or Raspberry Pi OS (64-bit). amd64 and arm64. Requires sudo.</p>
       <div class="install-cmd">
-        <pre><code id="install-line">curl -fsSL https://github.com/yeegz/hostmortem/releases/latest/download/install.sh | sudo sh</code></pre>
+        <pre><code id="install-line">curl -fsSL https://github.com/<wbr>yeegz/<wbr>hostmortem/<wbr>releases/<wbr>latest/<wbr>download/<wbr>install.sh | sudo sh</code></pre>
         <button class="copy-btn" type="button" data-copy="install-line" hidden>
-          <svg class="control-icon" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="9" height="9" rx="1.4"/><path d="M12 4H5a1 1 0 0 0-1 1v7"/></svg>
+          <svg class="control-icon copy-outline" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="9" height="9" rx="1.4"/><path d="M12 4H5a1 1 0 0 0-1 1v7"/></svg>
+          <svg class="control-icon copy-check" viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4 4 8-8" pathLength="1"/></svg>
           <span aria-live="polite">Copy</span>
         </button>
       </div>
@@ -83,7 +84,8 @@
         <div class="tape-head">
           <figcaption class="tape-what" id="tape-what"></figcaption>
           <button class="replay-btn" type="button" id="replay-btn">
-            <svg class="control-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6V4Z"/></svg>
+            <svg class="control-icon replay-play" viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6V4Z"/></svg>
+            <svg class="control-icon replay-pause" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4v12m6-12v12"/></svg>
             <span aria-live="polite">Replay tape</span>
           </button>
         </div>
@@ -92,6 +94,10 @@
           <svg id="tape-svg" preserveAspectRatio="none" aria-hidden="true"></svg>
           <div class="lane-names" aria-hidden="true"></div>
           <div class="cursor" aria-hidden="true"></div>
+        </div>
+        <div class="event-position">
+          <span id="event-count" aria-hidden="true">Event</span>
+          <input id="event-seek" type="range" aria-label="Event position" min="1" max="1" value="1" disabled>
         </div>
         <div class="event-controls">
           <output class="readout" id="readout" aria-live="polite"></output>
@@ -105,7 +111,7 @@
           </div>
         </div>
         <div class="tape-footer">
-          <p class="tape-help" id="tape-help">Select a mark or use the arrows. Shift + arrow jumps between faults on the tape.</p>
+          <p class="tape-help" id="tape-help">Time is measured from the incident start. Shift + arrow jumps between faults on the tape.</p>
           <ul class="tape-key" aria-label="Tape legend">
             <li><span class="key-event" aria-hidden="true"></span>Event</li>
             <li><span class="key-fault" aria-hidden="true"></span>Fault</li>

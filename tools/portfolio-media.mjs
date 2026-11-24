@@ -18,7 +18,11 @@ async function shot(name, { path = "", target, width = 1440, height = 900, scale
   });
   try {
     await page.goto(target || new URL(path, url).href);
-    await page.evaluate(() => document.fonts.ready);
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      const mark = document.querySelector(".mark img");
+      if (mark) await mark.decode();
+    });
     if (section) {
       await page.locator(section).evaluate((element, top) => {
         window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - top);
