@@ -2,15 +2,15 @@
 @font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-400.woff2) format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:"IBM Plex Mono";src:url(fonts/ibm-plex-mono-500.woff2) format("woff2");font-weight:500;font-display:swap}
 
-/* Instrument panel: slate-navy hardware in layers (recessed wells, raised
-   bevelled cards), one signal blue, steel for "possible", green/red lights.
+/* Recorder hardware: graphite panels in layers (recessed wells, raised
+   bevelled cards), one phosphor green, steel for "possible", red alarms.
    No gradient text, no glows. */
 :root{
-  --paper:#0e1622; --paper-2:#17222f; --grid:#1a2635; --grid-strong:#2b3a4c;
-  --ink:#e1e7ef; --ink-2:#aab6c6; --muted:#7d8a9c;
-  --orange:#4aa3ff; --orange-ink:#8cc4ff; --orange-wash:rgba(74,163,255,.10);
-  --steel:#9fb3c8; --rose:#f05a67; --ok:#4cc38a; --line:#1f2b3a;
-  --card:#17222f; --card2:#1b2836; --well:#0a1019;
+  --paper:#141a17; --paper-2:#1c2420; --grid:#1f2823; --grid-strong:#33403a;
+  --ink:#e3ebe5; --ink-2:#aebbb3; --muted:#80918a;
+  --orange:#6fdc9a; --orange-ink:#9be8b8; --orange-wash:rgba(111,220,154,.10);
+  --steel:#a7bdb0; --rose:#ff5f6b; --ok:#6fdc9a; --line:#26302b;
+  --card:#1c2420; --card2:#202a25; --well:#0b0f0d;
   --hi:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -1px 0 rgba(0,0,0,.35);
   --sh-1:0 1px 0 rgba(0,0,0,.5),0 8px 18px -10px rgba(0,0,0,.7);
   --sh-2:0 1px 0 rgba(0,0,0,.5),0 18px 36px -18px rgba(0,0,0,.8);
@@ -260,72 +260,72 @@ h3{font:700 17px/1.3 var(--text)}
 
 
 /* =================== Depth layer =================== */
-body{background:linear-gradient(180deg,#121b28,var(--paper) 520px)}
-.top{background:rgba(14,22,34,.86);border-bottom:1px solid rgba(150,170,195,.12);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+body{background:linear-gradient(180deg,#19211d,var(--paper) 520px)}
+.top{background:rgba(20,26,23,.86);border-bottom:1px solid rgba(160,185,170,.12);box-shadow:0 1px 0 rgba(0,0,0,.4)}
 .top nav a{color:var(--ink-2)}
-.top nav a:hover{background:rgba(150,170,195,.10)}
+.top nav a:hover{background:rgba(160,185,170,.10)}
 section{border-bottom:0}
-.hero h1{color:#f2f5f9}
+.hero h1{color:#f1f6f2}
 .hero h1 span{color:var(--steel)}
-h2{color:#eef2f7}
+h2{color:#edf3ee}
 
 /* Pressable keys: a raised cap with a lip that compresses. */
-.get-primary,.copy-btn{position:relative;border:0;border-radius:10px;color:#06182b!important;background:var(--orange);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #1f5f9e,0 8px 16px -10px rgba(0,0,0,.8);
+.get-primary,.copy-btn{position:relative;border:0;border-radius:10px;color:#062014!important;background:var(--orange);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #2f8a57,0 8px 16px -10px rgba(0,0,0,.8);
   transition:transform 90ms var(--ease),box-shadow 90ms var(--ease),background var(--t-fast) var(--ease)}
-.get-primary:hover,.copy-btn:hover{background:#5cb0ff;color:#06182b}
-.get-primary:active,.copy-btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #1f5f9e}
-.get a:not(.get-primary){color:var(--ink-2);text-decoration-color:rgba(140,196,255,.4)}
+.get-primary:hover,.copy-btn:hover{background:#86e6ab;color:#062014}
+.get-primary:active,.copy-btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #2f8a57}
+.get a:not(.get-primary){color:var(--ink-2);text-decoration-color:rgba(155,232,184,.4)}
 .get a:not(.get-primary):hover{color:var(--orange-ink)}
 
 /* Install console: raised slab, sunken command well. */
 .install{border-top:0;padding:26px clamp(18px,3vw,30px) 28px;border-radius:var(--r-lg);
-  background:var(--card);box-shadow:var(--hi),var(--sh-2);border:1px solid rgba(150,170,195,.14)}
+  background:var(--card);box-shadow:var(--hi),var(--sh-2);border:1px solid rgba(160,185,170,.14)}
 .install-title{display:flex;align-items:center;gap:10px}
 .install-title::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:inset 0 -1px 1px rgba(0,0,0,.35)}
 .install-cmd pre{background:var(--well);border:0;border-radius:10px;box-shadow:var(--sunk);padding:15px 18px}
-.install-cmd pre code{color:#d6e6f7}
+.install-cmd pre code{color:#d9eee0}
 .install-cmd pre code::before{content:"$ ";color:var(--ok)}
 .install-steps{gap:8px}
-.install-steps li{padding:10px 14px;border-radius:10px;background:var(--card2);box-shadow:var(--hi);border:1px solid rgba(150,170,195,.10)}
+.install-steps li{padding:10px 14px;border-radius:10px;background:var(--card2);box-shadow:var(--hi);border:1px solid rgba(160,185,170,.10)}
 .install-steps li code,.install code{color:var(--orange-ink)}
 .examples-title{border-top:0;padding-top:8px}
 
 /* Picker: keys on a sunken track; the selected key is raised. */
 .picker{gap:4px;padding:5px 40px 5px 5px;border:0;border-radius:12px;background:var(--well);box-shadow:var(--sunk);margin-bottom:14px}
 .picker button{border-radius:8px;padding:11px 14px;min-height:40px;position:relative;z-index:1}
-.picker button:hover{background:rgba(150,170,195,.08)}
-.picker button[aria-selected=true]{color:#eef2f7;font-weight:600}
-.picker-ink{top:5px;bottom:5px;height:auto;border-radius:8px;z-index:0;background:#2a3949;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 0 var(--orange),0 2px 0 #0b121b}
+.picker button:hover{background:rgba(160,185,170,.08)}
+.picker button[aria-selected=true]{color:#edf3ee;font-weight:600}
+.picker-ink{top:5px;bottom:5px;height:auto;border-radius:8px;z-index:0;background:#2b3530;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 0 var(--orange),0 2px 0 #0c110e}
 
 /* The device: a bevelled housing around a recessed screen. */
-.tape-wrap{position:relative;border:1px solid rgba(150,170,195,.16);border-radius:var(--r-lg);padding:16px 16px 18px;
-  background:linear-gradient(180deg,#1d2a3a,#151f2c);box-shadow:var(--hi),var(--sh-2)}
+.tape-wrap{position:relative;border:1px solid rgba(160,185,170,.16);border-radius:var(--r-lg);padding:16px 16px 18px;
+  background:linear-gradient(180deg,#232d28,#171e1a);box-shadow:var(--hi),var(--sh-2)}
 .tape-head{align-items:center}
 .rec{display:inline-flex;align-items:center;gap:8px;font:500 12px/1 var(--display);color:var(--ink-2);
   padding:7px 10px;border-radius:8px;background:var(--well);box-shadow:var(--sunk);white-space:nowrap}
 .rec i{width:8px;height:8px;border-radius:50%;background:var(--rose);animation:led 2.4s ease-in-out infinite}
 @keyframes led{50%{opacity:.35}}
 .tape-tools{display:flex;align-items:center;gap:8px}
-.replay-btn{border:0;border-radius:8px;color:var(--ink);background:#2a3949;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #0b121b}
-.replay-btn:hover{background:#324356}
-.replay-btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 #0b121b}
+.replay-btn{border:0;border-radius:8px;color:var(--ink);background:#2b3530;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #0c110e}
+.replay-btn:hover{background:#35423b}
+.replay-btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 #0c110e}
 .tape{border-radius:10px;overflow:hidden;
-  background:repeating-linear-gradient(90deg,transparent 0 47px,rgba(150,170,195,.07) 47px 48px),#070c14;
+  background:repeating-linear-gradient(90deg,transparent 0 47px,rgba(160,185,170,.07) 47px 48px),#070b09;
   box-shadow:inset 0 3px 10px rgba(0,0,0,.75),inset 0 0 0 1px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.06)}
-.lane-names{background:#0a1019;border-right:1px solid rgba(150,170,195,.12)}
+.lane-names{background:#0b0f0d;border-right:1px solid rgba(160,185,170,.12)}
 .lane-names span{color:var(--muted)}
 .cursor{background:var(--orange)}
-.lane-rule{stroke:rgba(150,170,195,.10)}
-.m-ok{stroke:#9fb3c8;stroke-opacity:.35}
-.m-info{stroke:#d6e2ef}
+.lane-rule{stroke:rgba(160,185,170,.10)}
+.m-ok{stroke:#a7bdb0;stroke-opacity:.35}
+.m-info{stroke:#dbe8df}
 .m-bad{stroke:var(--rose)}
 .m-hit{stroke:var(--orange)}
 .pen{stroke:var(--orange)}
 .splice-line{stroke:var(--steel)}
-.window{fill:rgba(74,163,255,.07)}
+.window{fill:rgba(111,220,154,.07)}
 .readout{border-left:0;border-radius:10px;padding:10px 14px;background:var(--well);box-shadow:var(--sunk);color:var(--ink-2)}
 .readout.bad{box-shadow:var(--sunk),inset 3px 0 0 var(--rose)}
 
@@ -333,40 +333,40 @@ h2{color:#eef2f7}
 .verdict{gap:10px}
 .v-conclusion .word{color:var(--orange-ink)}
 .v-conclusion .word.unknown{color:var(--ink);text-decoration-color:var(--steel)}
-.v-row{border-top:0;padding:16px 18px;border-radius:12px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(150,170,195,.10)}
+.v-row{border-top:0;padding:16px 18px;border-radius:12px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(160,185,170,.10)}
 .v-tag{padding:4px 10px;border-radius:6px;font-size:12px}
-.v-tag.supported{color:#06182b;background:var(--orange);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 0 #1f5f9e}
-.v-tag.possible{color:#e6edf5;background:#2a3949;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #0b121b}
-.v-tag.ruled_out{color:var(--muted);background-color:transparent;box-shadow:inset 0 0 0 1px rgba(150,170,195,.18)}
+.v-tag.supported{color:#062014;background:var(--orange);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 0 #2f8a57}
+.v-tag.possible{color:#e6eee8;background:#2b3530;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #0c110e}
+.v-tag.ruled_out{color:var(--muted);background-color:transparent;box-shadow:inset 0 0 0 1px rgba(160,185,170,.18)}
 .cite{background:var(--well);color:var(--orange-ink);border-radius:5px;box-shadow:var(--sunk)}
-.cite:hover,.cite:focus-visible{background:var(--orange);color:#06182b}
+.cite:hover,.cite:focus-visible{background:var(--orange);color:#062014}
 .blind{border:0;border-radius:12px;
-  background:repeating-linear-gradient(135deg,rgba(150,170,195,.07) 0 8px,transparent 8px 16px),#111a25;
-  box-shadow:inset 0 0 0 1px rgba(150,170,195,.2)}
+  background:repeating-linear-gradient(135deg,rgba(160,185,170,.07) 0 8px,transparent 8px 16px),#121915;
+  box-shadow:inset 0 0 0 1px rgba(160,185,170,.2)}
 
 /* How: raised tiles; numbers are a real sequence (keycaps). */
 .steps{gap:14px}
-.steps li{border-top:0;padding:18px;border-radius:14px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(150,170,195,.10)}
+.steps li{border-top:0;padding:18px;border-radius:14px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(160,185,170,.10)}
 .steps li::before{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:7px;margin-bottom:12px;
-  color:#e6edf5;background:#2a3949;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #0b121b}
+  color:#e6eee8;background:#2b3530;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #0c110e}
 .diagram{padding:20px;border-radius:var(--r-lg);background:var(--well);box-shadow:var(--sunk)}
-.d-box{fill:#17222f;stroke:rgba(150,170,195,.3)}
-.d-box.accent{fill:#132235;stroke:var(--orange)}
-.d-line{stroke:rgba(150,170,195,.4)}
+.d-box{fill:#1c2420;stroke:rgba(160,185,170,.3)}
+.d-box.accent{fill:#13261b;stroke:var(--orange)}
+.d-line{stroke:rgba(160,185,170,.4)}
 
 /* Measured: readouts on raised plates. */
 .ledger{gap:12px;border-top:0}
-.ledger div{padding:18px;border-bottom:0;border-radius:14px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(150,170,195,.10)}
-.ledger dd{color:#f2f5f9}
+.ledger div{padding:18px;border-bottom:0;border-radius:14px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(160,185,170,.10)}
+.ledger dd{color:#f1f6f2}
 .ledger a{color:var(--muted)}
 
 /* Status: two plates with status lights. */
 .status-cols{gap:14px}
-.status-cols>div{padding:20px;border-radius:14px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(150,170,195,.10)}
-.status-cols li{border-top:1px solid rgba(150,170,195,.10);padding-left:20px;position:relative}
+.status-cols>div{padding:20px;border-radius:14px;background:var(--card);box-shadow:var(--hi),var(--sh-1);border:1px solid rgba(160,185,170,.10)}
+.status-cols li{border-top:1px solid rgba(160,185,170,.10);padding-left:20px;position:relative}
 .status-cols li::before{content:"";position:absolute;left:2px;top:17px;width:7px;height:7px;border-radius:50%;background:var(--ok)}
 #status-not li::before{background:transparent;box-shadow:inset 0 0 0 1.5px var(--muted)}
-.foot{border-top:1px solid rgba(150,170,195,.10)}
+.foot{border-top:1px solid rgba(160,185,170,.10)}
 
 @media (max-width:560px){.picker{padding-right:40px}.tape-head{flex-wrap:wrap}}
 @media (prefers-reduced-motion:reduce){.rec i{animation:none}}
